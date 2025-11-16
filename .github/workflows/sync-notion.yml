@@ -27,7 +27,8 @@ jobs:
         env:
           NOTION_SECRET: ${{ secrets.NOTION_SECRET }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-        run: node スクリプト/fetch-notion.js
+        run: node scripts/fetch-notion.js
+
 
       # 4) 有變更就 commit & push（包含 fishorder.csv）
       - name: 変更があればコミットしてプッシュしてください
