@@ -547,7 +547,7 @@ let headerKeys = [];
 const COL_EMAIL    = "信箱";
 const COL_MEMBER   = "會員編號";
 const COL_LINE     = "LINE名稱";
-const COL_CUSTOMER = "客人名稱";   // 新增：客人名稱
+const COL_CUSTOMER = "客人名稱";
 const COL_ITEM     = "商品名稱";
 const COL_SPEC     = "款式";
 const COL_QTY      = "數量";
@@ -556,12 +556,88 @@ const COL_PRICE    = "金額";
 const COL_URL      = "商品網址";
 const COL_NOTE     = "備註";
 const COL_DATE     = "更新日期";
-const COL_SHIPDATE = "出貨日期";   // 出貨日期欄位
+const COL_SHIPDATE = "出貨日期";
 
-// 新增：後台額外資訊
-const COL_WEIGHT   = "重量";       // 以 g 計
-const COL_INTL_FEE = "國際運費";   // 數字
-const COL_INTL_INC = "含國際運費"; // Checkbox 轉成 "TRUE" / 空字串
+// 後台額外資訊
+const COL_WEIGHT   = "重量";        // g
+const COL_INTL_FEE = "國際運費";    // 預計國際運費（台幣）
+const COL_INTL_INC = "含國際運費";  // TRUE / 空字串
+
+// 付款相關欄位（你之後 CSV 可以加上）
+const COL_PAYMENT_STATUS = "付款狀態"; // 未付款 / 部分付款 / 已全額付款
+const COL_REMAIN_TWD     = "剩餘金額"; // 只有部分付款會填（台幣）
+
+// ========== 小工具：日期 / 數字 / 重量 ==========
+
+// 盡量把 ISO 長條日期變成 2025-11-16 這種
+function formatDateDisplay(str) {
+  if (!str) return "";
+  // 看起來像 ISO 的才轉
+  if (/\d{4}-\d{2}-\d{2}T/.test(str)) {
+    const d = new Date(str);
+    if (!isNaN(d)) {
+      const s = d.toLocaleString("zh-TW", {
+        timeZone: "Asia/Taipei",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).replace(/\//g, "-");
+      return s;
+    }
+  }
+  return str;
+}
+
+function formatTotalWeight(totalGram) {
+  if (!totalGram || totalGram <= 0) return "—";
+  return totalGram.toLocaleString("zh-TW") + " g";
+}
+
+function parsePriceNumber(t) {
+  const n = parseFloat((t || "").replace(/[^\d.]/g, ""));
+  return isNaN(n) ? null : n;
+}
+
+function parseQuantityNumber(t) {
+  const n = parseFloat((t || "1").replace(/[^\d.]/g, ""));
+  return isNaN(n) ? 1 : n;
+}
+
+function parseNumberSafe(t) {
+  const n = parseFloat((t || "").replace(/[^\d.]/g, ""));
+  return isNaN(n) ? null : n;
+}
+
+// 狀態→樣式 key
+function getStatusStyleKey(t) {
+  const s = (t || "").toLowerCase();
+
+  if (s.includes("未") || s.includes("待")) {
+    return "pending";
+  }
+  if (
+    s.includes("處理") || s.includes("進行") ||
+    s.includes("處理中") || s.includes("下單") ||
+    s.includes("準備") || s.includes("準備中")
+  ) {
+    return "processing";
+  }
+  if (
+    s.includes("到貨") || s.includes("已到") ||
+    s.includes("抵台") || s.includes("到着") || s.includes("到著")
+  ) {
+    return "arrived";
+  }
+  if (
+    s.includes("完成")  || s.includes("結單")  ||
+    s.includes("寄出")  || s.includes("已寄") ||
+    s.includes("完了")  || s.includes("已出貨") ||
+    s.includes("出貨")  || s.includes("出荷")
+  ) {
+    return "done";
+  }
+  return "default";
+}
 
 // 讀取 fishorder.csv
 window.addEventListener("DOMContentLoaded", () => {
@@ -626,75 +702,32 @@ function parseRawData(raw) {
   });
 }
 
-function parsePriceNumber(t){
-  const n = parseFloat((t||"").replace(/[^\d.]/g,""));
-  return isNaN(n)?null:n;
-}
+function searchOrder() {
+  const type = document.getElementById("searchType").value;
+  const val  = document.getElementById("searchValue").value.trim().toLowerCase();
+  const out  = document.getElementById("result");
+  out.innerHTML = "";
 
-function parseQuantityNumber(t){
-  const n = parseFloat((t||"1").replace(/[^\d.]/g,""));
-  return isNaN(n)?1:n;
-}
-
-// 狀態→樣式 key
-function getStatusStyleKey(t){
-  const s = (t || "").toLowerCase();
-
-  // 先判斷「未」「待」
-  if (s.includes("未") || s.includes("待")) {
-    return "pending";
-  }
-  // 處理中
-  if (
-    s.includes("處理") || s.includes("進行") ||
-    s.includes("處理中") || s.includes("下單") ||
-    s.includes("準備") || s.includes("準備中")
-  ) {
-    return "processing";
-  }
-  // 已到貨
-  if (
-    s.includes("到貨") || s.includes("已到") ||
-    s.includes("抵台") || s.includes("到着") || s.includes("到著")
-  ) {
-    return "arrived";
-  }
-  // 已完成 / 已出貨
-  if (
-    s.includes("完成")  || s.includes("結單")  ||
-    s.includes("寄出")  || s.includes("已寄") ||
-    s.includes("完了")  || s.includes("已出貨") ||
-    s.includes("出貨")  || s.includes("出荷")
-  ) {
-    return "done";
-  }
-  return "default";
-}
-
-function searchOrder(){
-  const type=document.getElementById("searchType").value;
-  const val=document.getElementById("searchValue").value.trim().toLowerCase();
-  const out=document.getElementById("result");
-  out.innerHTML="";
-
-  if(!val){
+  if (!val) {
     alert("請輸入查詢內容");
     return;
   }
-  if(!rows.length){
-    out.innerHTML='<div class="empty">尚未載入資料，請確認 fishorder.csv 是否存在。</div>';
+  if (!rows.length) {
+    out.innerHTML = '<div class="empty">尚未載入資料，請確認 fishorder.csv 是否存在。</div>';
     return;
   }
 
-  const hasEmail      = headerKeys.includes(COL_EMAIL);
-  const hasMember     = headerKeys.includes(COL_MEMBER);
-  const hasLine       = headerKeys.includes(COL_LINE);
-  const hasCustomer   = headerKeys.includes(COL_CUSTOMER);
-  const hasShipDate   = headerKeys.includes(COL_SHIPDATE);
-  const hasDate       = headerKeys.includes(COL_DATE);
-  const hasWeight     = headerKeys.includes(COL_WEIGHT);
-  const hasIntlFee    = headerKeys.includes(COL_INTL_FEE);
-  const hasIntlInc    = headerKeys.includes(COL_INTL_INC);
+  const hasEmail         = headerKeys.includes(COL_EMAIL);
+  const hasMember        = headerKeys.includes(COL_MEMBER);
+  const hasLine          = headerKeys.includes(COL_LINE);
+  const hasCustomer      = headerKeys.includes(COL_CUSTOMER);
+  const hasShipDate      = headerKeys.includes(COL_SHIPDATE);
+  const hasDate          = headerKeys.includes(COL_DATE);
+  const hasWeight        = headerKeys.includes(COL_WEIGHT);
+  const hasIntlFee       = headerKeys.includes(COL_INTL_FEE);
+  const hasIntlInc       = headerKeys.includes(COL_INTL_INC);
+  const hasPaymentStatus = headerKeys.includes(COL_PAYMENT_STATUS);
+  const hasRemainTwd     = headerKeys.includes(COL_REMAIN_TWD);
 
   let targetColName = null;
   if (type === "email") {
@@ -717,13 +750,13 @@ function searchOrder(){
     targetColName = COL_LINE;
   }
 
-  const matches = rows.filter(r=>{
-    const v=(r[targetColName]||"").toLowerCase();
-    return type==="line" ? v.includes(val) : v===val;
+  const matches = rows.filter(r => {
+    const v = (r[targetColName] || "").toLowerCase();
+    return type === "line" ? v.includes(val) : v === val;
   });
 
-  if(!matches.length){
-    out.innerHTML='<div class="empty">查無符合的訂單資料，請確認輸入內容是否正確。</div>';
+  if (!matches.length) {
+    out.innerHTML = '<div class="empty">查無符合的訂單資料，請確認輸入內容是否正確。</div>';
     return;
   }
 
@@ -733,13 +766,13 @@ function searchOrder(){
   // ========= 客人資訊 =========
   html += `<div class="section-title"><span class="section-title-icon">👤</span> 客人資訊</div>`;
   html += `<div class="customer-box"><ul>`;
-  if(hasMember)   html+=`<li>會員編號：${firstRow[COL_MEMBER]||""}</li>`;
-  if(hasCustomer) html+=`<li>客人名稱：${firstRow[COL_CUSTOMER]||""}</li>`;
-  if(hasLine)     html+=`<li>LINE 名稱：${firstRow[COL_LINE]||""}</li>`;
-  if(hasEmail)    html+=`<li>信箱：${firstRow[COL_EMAIL]||""}</li>`;
+  if (hasMember)   html += `<li>會員編號：${firstRow[COL_MEMBER]   || ""}</li>`;
+  if (hasCustomer) html += `<li>客人名稱：${firstRow[COL_CUSTOMER] || ""}</li>`;
+  if (hasLine)     html += `<li>LINE 名稱：${firstRow[COL_LINE]    || ""}</li>`;
+  if (hasEmail)    html += `<li>信箱：${firstRow[COL_EMAIL]        || ""}</li>`;
   html += `</ul></div>`;
 
-  // ========= 商品列表 & 小結 =========
+  // ========= 商品列表 & 小結 需要用到的欄位判斷 =========
   const hasItem   = headerKeys.includes(COL_ITEM);
   const hasSpec   = headerKeys.includes(COL_SPEC);
   const hasQty    = headerKeys.includes(COL_QTY);
@@ -748,68 +781,101 @@ function searchOrder(){
   const hasUrl    = headerKeys.includes(COL_URL);
   const hasNote   = headerKeys.includes(COL_NOTE);
 
-  // 只計算「未完成」的總件數＋總金額
-  let activeQty = 0;
-  let activeAmount = 0;
-  if (hasStatus) {
-    matches.forEach(r => {
-      const stKey = getStatusStyleKey(r[COL_STATUS]);
-      if (stKey !== "done") {
-        const q = hasQty ? parseQuantityNumber(r[COL_QTY]) : 1;
-        activeQty += q;
-        if (hasPrice) {
-          const p = parsePriceNumber(r[COL_PRICE]);
-          if (p !== null) {
-            activeAmount += p * q;
-          }
-        }
-      }
-    });
-  } else {
-    // 沒有狀態欄位就全部算進來
-    matches.forEach(r => {
-      const q = hasQty ? parseQuantityNumber(r[COL_QTY]) : 1;
-      activeQty += q;
-      if (hasPrice) {
-        const p = parsePriceNumber(r[COL_PRICE]);
-        if (p !== null) {
-          activeAmount += p * q;
-        }
-      }
-    });
-  }
+  // ========= 小計計算（以台幣為主，視 COL_PRICE 為 NT$） =========
+  let activeCount      = 0;  // 未完成「筆數」
+  let totalTwd         = 0;  // 未完成總金額
+  let totalWeightGram  = 0;  // 未完成總重量
+  let needPayTwd       = 0;  // 還需收款金額
 
-  if(!hasItem && !hasSpec){
-    // 沒有商品欄位就直接簡易顯示
-    html += `<div class="section-title"><span class="section-title-icon">📦</span> 商品列表（簡易顯示）</div>`;
-    if (activeQty > 0) {
-      html += `<div class="summary-box">
-        目前未完成訂單共 <b>${activeQty}</b> 件商品${
-          (hasPrice && activeAmount)
-            ? `，合計金額約 <b>¥ ${activeAmount.toLocaleString("ja-JP")}</b>`
-            : ""
-        }
-      </div>`;
-    } else {
-      html += `<div class="summary-box">目前沒有未完成的訂單，以下為已完成紀錄。</div>`;
+  matches.forEach(r => {
+    const statusKey = hasStatus ? getStatusStyleKey(r[COL_STATUS]) : "default";
+    const isDone    = (statusKey === "done");
+    if (isDone) return;
+
+    activeCount += 1;
+
+    const qty = hasQty ? parseQuantityNumber(r[COL_QTY]) : 1;
+    let unitPrice = null;
+    let orderTotal = 0;
+
+    if (hasPrice) {
+      const p = parsePriceNumber(r[COL_PRICE]);
+      if (p !== null) {
+        unitPrice  = p;
+        orderTotal = p * qty;
+        totalTwd  += orderTotal;
+      }
     }
 
-    matches.forEach((r, idx)=>{
+    if (hasWeight && r[COL_WEIGHT]) {
+      const w = parseNumberSafe(r[COL_WEIGHT]);
+      if (w !== null) totalWeightGram += w * qty;
+    }
+
+    // 付款狀態：未付款 / 部分付款 / 已全額付款
+    if (hasPaymentStatus && hasPrice) {
+      const ps = (r[COL_PAYMENT_STATUS] || "").trim();
+      if (ps === "部分付款" && hasRemainTwd) {
+        const rem = parseNumberSafe(r[COL_REMAIN_TWD]);
+        if (rem !== null) needPayTwd += rem;
+      } else if (ps === "已全額付款") {
+        // 不需再收款
+      } else {
+        // 未付款 or 其他狀態 → 整筆都還沒收
+        if (unitPrice !== null) {
+          needPayTwd += unitPrice * qty;
+        }
+      }
+    }
+  });
+
+  // 如果沒有付款狀態欄位，就視為全部未付款
+  if (!headerKeys.includes(COL_PAYMENT_STATUS)) {
+    needPayTwd = totalTwd;
+  }
+
+  let summaryHtml = "";
+  if (activeCount > 0) {
+    const totalTwdText  = "NT$ " + totalTwd.toLocaleString("zh-TW");
+    const weightText    = totalWeightGram ? formatTotalWeight(totalWeightGram) : "";
+    const needPayText   = "NT$ " + needPayTwd.toLocaleString("zh-TW");
+    summaryHtml = `
+      <div class="summary-box">
+        🧾 未完成訂單 ${activeCount} 筆｜總額 <b>${totalTwdText}</b>${weightText ? `｜總重量 ${weightText}` : ""}<br>
+        <span style="display:inline-block;margin-top:4px;">[ 還需收款 <b>${needPayText}</b> ]</span>
+      </div>
+    `;
+  } else {
+    summaryHtml = `<div class="summary-box">目前沒有未完成的訂單，以下為已完成紀錄。</div>`;
+  }
+
+  // ========= 沒有商品欄位的簡易版本 =========
+  if (!hasItem && !hasSpec) {
+    html += `<div class="section-title"><span class="section-title-icon">📦</span> 商品列表（簡易顯示）</div>`;
+    html += summaryHtml;
+
+    matches.forEach((r, idx) => {
       const stText = hasStatus ? (r[COL_STATUS] || "") : "";
       const stKey  = hasStatus ? getStatusStyleKey(stText) : "default";
       html += `<div class="card card--${stKey}" data-status="${stKey}">`;
-      html += `<div class="card-header" onclick="toggleCardBody(this)">
-                 <div class="card-main">
-                   <div class="card-title">
-                     第 ${idx+1} 筆訂單
-                     ${hasStatus ? `<span class="badge badge--${stKey}">${stText}</span>` : ""}
-                   </div>
-                 </div>
-                 <div class="card-toggle-icon">⌄</div>
-               </div>`;
-      html += `<div class="card-body${idx===0?" open":""}">`;
-      headerKeys.forEach(k=>{
-        html += `<div class="card-body-row">${k}：${r[k]||""}</div>`;
+      html += `
+        <div class="card-header" onclick="toggleCardBody(this)">
+          <div class="card-main">
+            <div class="card-title">
+              第 ${idx + 1} 筆訂單
+              ${hasStatus ? `<span class="badge badge--${stKey}">${stText}</span>` : ""}
+            </div>
+          </div>
+          <div class="card-toggle-icon">⌄</div>
+        </div>
+      `;
+      html += `<div class="card-body${idx === 0 ? " open" : ""}">`;
+      headerKeys.forEach(k => {
+        let v = r[k] || "";
+        if (k === COL_DATE || k === COL_SHIPDATE) {
+          v = formatDateDisplay(v);
+        }
+        html += `<div class="card-body-row">${k}：${v}</div>`;
       });
       html += `</div></div>`;
     });
@@ -820,29 +886,17 @@ function searchOrder(){
         目前因為 CSV 標題中沒有「商品名稱 / 款式」欄位，暫以原始欄位顯示。
       </div>
     `;
-
     html += statusLegendHtml();
     out.innerHTML = html;
     setupDoneFilter();
     return;
   }
 
+  // ========= 一般「商品列表」版本 =========
   html += `<div class="section-title"><span class="section-title-icon">📦</span> 商品列表</div>`;
+  html += summaryHtml;
 
-  // 小結
-  if (activeQty > 0) {
-    html += `<div class="summary-box">
-      目前未完成訂單共 <b>${activeQty}</b> 件商品${
-        (hasPrice && activeAmount)
-          ? `，合計金額約 <b>¥ ${activeAmount.toLocaleString("ja-JP")}</b>`
-          : ""
-      }
-    </div>`;
-  } else {
-    html += `<div class="summary-box">目前沒有未完成的訂單，以下為已完成紀錄。</div>`;
-  }
-
-  // 篩選列：顯示已完成
+  // 篩選列：維持原本「顯示已完成」勾勾（之後要改下拉可以再調）
   html += `
     <div class="filter-bar">
       <label>
@@ -853,51 +907,51 @@ function searchOrder(){
   `;
 
   // 依 商品名稱 + 款式 分組
-  const group={};
-  matches.forEach(r=>{
-    const itemVal = hasItem ? (r[COL_ITEM]||"") : "";
-    const specVal = hasSpec ? (r[COL_SPEC]||"") : "";
-    const key=itemVal+"||"+specVal;
-    if(!group[key]) group[key]=[];
+  const group = {};
+  matches.forEach(r => {
+    const itemVal = hasItem ? (r[COL_ITEM] || "") : "";
+    const specVal = hasSpec ? (r[COL_SPEC] || "") : "";
+    const key = itemVal + "||" + specVal;
+    if (!group[key]) group[key] = [];
     group[key].push(r);
   });
 
-  Object.keys(group).forEach((key, idx)=>{
-    const list=group[key];
-    const last=list[list.length-1];
+  Object.keys(group).forEach((key, idx) => {
+    const list = group[key];
+    const last = list[list.length - 1];
 
-    const itemVal = hasItem ? (list[0][COL_ITEM]||"") : "";
-    const specVal = hasSpec ? (list[0][COL_SPEC]||"") : "";
+    const itemVal = hasItem ? (list[0][COL_ITEM] || "") : "";
+    const specVal = hasSpec ? (list[0][COL_SPEC] || "") : "";
 
-    const qtyTotal=list.map(r=>{
+    const qtyTotal = list.map(r => {
       return hasQty ? parseQuantityNumber(r[COL_QTY]) : 1;
-    }).reduce((a,b)=>a+b,0);
+    }).reduce((a, b) => a + b, 0);
 
     const priceBase = hasPrice ? parsePriceNumber(list[0][COL_PRICE]) : null;
-    const total=priceBase?priceBase*qtyTotal:"";
+    const total = priceBase ? priceBase * qtyTotal : "";
 
     const noteCombined = hasNote
-      ? [...new Set(list.map(r=>r[COL_NOTE]).filter(Boolean))].join(" / ")
+      ? [...new Set(list.map(r => r[COL_NOTE]).filter(Boolean))].join(" / ")
       : "";
 
-    const statusText = hasStatus ? (last[COL_STATUS] || "") : "";
+    const statusText     = hasStatus ? (last[COL_STATUS] || "") : "";
     const statusKeyStyle = hasStatus ? getStatusStyleKey(statusText) : "default";
 
     html += `<div class="card card--${statusKeyStyle}" data-status="${statusKeyStyle}">`;
 
-    // header（點擊展開/收合）
+    // header
     html += `
       <div class="card-header" onclick="toggleCardBody(this)">
         <div class="card-main">
           <div class="card-title">
-            ${itemVal || "未填商品"}${specVal?`（${specVal}）`:""}
+            ${itemVal || "未填商品"}${specVal ? `（${specVal}）` : ""}
             ${hasStatus ? `<span class="badge badge--${statusKeyStyle}">${statusText}</span>` : ""}
           </div>
           <div class="card-subline">
             <span>數量：${qtyTotal}</span>
             ${
               hasPrice
-                ? `<span>金額：${list[0][COL_PRICE] || ""}${total?`（合計：${total}）`:""}</span>`
+                ? `<span>金額：${list[0][COL_PRICE] || ""}${total ? `（合計：${total}）` : ""}</span>`
                 : ""
             }
           </div>
@@ -906,25 +960,55 @@ function searchOrder(){
       </div>
     `;
 
-    // body（詳細資訊）
-    html += `<div class="card-body${idx===0?" open":""}">`;
+    // body
+    html += `<div class="card-body${idx === 0 ? " open" : ""}">`;
 
     // 👤 客人名稱
     if (hasCustomer && last[COL_CUSTOMER]) {
       html += `<div class="card-body-row">👤 客人名稱：${last[COL_CUSTOMER]}</div>`;
     }
 
-    // ⚖ 重量（有填才顯示）
+    // 💰 收款狀態（有欄位才顯示）
+    if (hasPaymentStatus) {
+      const ps = (last[COL_PAYMENT_STATUS] || "").trim();
+      let line = "";
+      if (ps === "未付款") {
+        line = "💰 收款狀態：未付款";
+      } else if (ps === "已全額付款") {
+        line = "💰 收款狀態：已全額付款";
+      } else if (ps === "部分付款") {
+        let remainText = "";
+        if (hasRemainTwd) {
+          const rem = parseNumberSafe(last[COL_REMAIN_TWD]);
+          if (rem !== null) {
+            remainText = `（剩餘 NT$ ${rem.toLocaleString("zh-TW")}）`;
+          }
+        }
+        line = "💰 收款狀態：部分付款 " + remainText;
+      }
+      if (line) {
+        html += `<div class="card-body-row">${line}</div>`;
+      }
+    }
+
+    // ⚖ 重量／預計國際運費：合併一行
+    let weightText = "";
+    let intlFeeText = "";
     if (hasWeight && last[COL_WEIGHT]) {
-      html += `<div class="card-body-row">⚖ 重量：${last[COL_WEIGHT]} g</div>`;
+      const w = parseNumberSafe(last[COL_WEIGHT]);
+      weightText = (w !== null) ? `${w} g` : `${last[COL_WEIGHT]} g`;
     }
-
-    // ✈ 國際運費（有填才顯示）
     if (hasIntlFee && last[COL_INTL_FEE]) {
-      html += `<div class="card-body-row">✈ 國際運費：¥ ${last[COL_INTL_FEE]}</div>`;
+      const fee = parseNumberSafe(last[COL_INTL_FEE]);
+      intlFeeText = (fee !== null)
+        ? `NT$ ${fee.toLocaleString("zh-TW")}`
+        : `NT$ ${last[COL_INTL_FEE]}`;
+    }
+    if (weightText || intlFeeText) {
+      html += `<div class="card-body-row">⚖ 重量／預計國際運費：${weightText || "—"} ／ ${intlFeeText || "—"}</div>`;
     }
 
-    // ✅ 含國際運費（Checkbox 轉出來是 TRUE 時才顯示）
+    // ✅ 金額已含國際運費
     if (hasIntlInc && last[COL_INTL_INC]) {
       const v = (last[COL_INTL_INC] || "").toString().toLowerCase();
       const isIncluded = ["true","yes","1","是","y"].some(t => v.includes(t));
@@ -933,20 +1017,19 @@ function searchOrder(){
       }
     }
 
-    if(hasUrl && last[COL_URL]) {
+    if (hasUrl && last[COL_URL]) {
       html += `<div class="card-body-row">🔗 商品連結：<a class="link-btn" href="${last[COL_URL]}" target="_blank" rel="noopener noreferrer">查看商品頁</a></div>`;
     }
-    if(noteCombined) {
+    if (noteCombined) {
       html += `<div class="card-body-row">📝 備註：${noteCombined}</div>`;
     }
     if (hasShipDate && last[COL_SHIPDATE]) {
-      html += `<div class="card-body-row">🚚 出貨日期：${last[COL_SHIPDATE]}</div>`;
+      html += `<div class="card-body-row">🚚 出貨日期：${formatDateDisplay(last[COL_SHIPDATE])}</div>`;
     }
     if (hasDate && last[COL_DATE]) {
-      html += `<div class="card-body-row">📅 更新日期：${last[COL_DATE]}</div>`;
+      html += `<div class="card-body-row">📅 更新日期：${formatDateDisplay(last[COL_DATE])}</div>`;
     }
     html += `</div>`; // end body
-
     html += `</div>`; // end card
   });
 
@@ -964,12 +1047,11 @@ function searchOrder(){
   }
 
   html += statusLegendHtml();
-
-  out.innerHTML=html;
+  out.innerHTML = html;
   setupDoneFilter();
 }
 
-function statusLegendHtml(){
+function statusLegendHtml() {
   return `
     <div class="status-legend">
       <div>📌 狀態說明（給您參考）</div>
@@ -985,7 +1067,6 @@ function statusLegendHtml(){
 
 /**
  * 依「出貨日期」統整已結單紀錄
- * 有出貨日期優先用，沒有才退回用更新日期
  */
 function buildHistoryByDateSection(doneRows, hasItem, hasSpec, hasQty, hasPrice, hasShipDate, hasDate) {
   if (!doneRows || !doneRows.length) {
@@ -1001,9 +1082,9 @@ function buildHistoryByDateSection(doneRows, hasItem, hasSpec, hasQty, hasPrice,
   doneRows.forEach(r => {
     let d = "未填日期";
     if (hasShipDate && r[COL_SHIPDATE]) {
-      d = r[COL_SHIPDATE];
+      d = formatDateDisplay(r[COL_SHIPDATE]);
     } else if (hasDate && r[COL_DATE]) {
-      d = r[COL_DATE];
+      d = formatDateDisplay(r[COL_DATE]);
     }
     if (!dateGroup[d]) dateGroup[d] = [];
     dateGroup[d].push(r);
@@ -1098,13 +1179,13 @@ function buildHistoryByDateSection(doneRows, hasItem, hasSpec, hasQty, hasPrice,
 }
 
 // 點 header 展開/收合
-function toggleCardBody(headerEl){
+function toggleCardBody(headerEl) {
   const body = headerEl.nextElementSibling;
-  if(!body) return;
+  if (!body) return;
   body.classList.toggle("open");
 }
 
-// 勾選「顯示已完成商品」的篩選邏輯
+// 原本的「顯示已完成商品」勾勾
 function setupDoneFilter() {
   const toggle = document.getElementById("showDoneToggle");
   if (!toggle) return;
@@ -1116,8 +1197,7 @@ function setupDoneFilter() {
     });
   };
   toggle.addEventListener("change", apply);
-  // 預設不顯示已完成（綠色小卡）
-  apply();
+  apply(); // 預設不顯示已完成
 }
 </script>
 
