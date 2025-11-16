@@ -552,8 +552,7 @@ const COL_INTL_INC = "含國際運費";
 const COL_PAYMENT_STATUS = "付款狀態"; // 未付款 / 部分付款 / 已全額付款
 const COL_REMAIN_TWD     = "剩餘金額"; // 只在部分付款時填（台幣）
 
-// ========== 小工具：日期 / 數字 / 重量 ==========
-
+// ===== 小工具 =====
 function formatDateDisplay(str) {
   if (!str) return "";
   if (/\d{4}-\d{2}-\d{2}T/.test(str)) {
@@ -590,7 +589,7 @@ function parseNumberSafe(t) {
   return isNaN(n) ? null : n;
 }
 
-// 狀態→樣式 key（對應 .card--pending / processing / arrived / done）
+// 狀態→樣式 key
 function getStatusStyleKey(t) {
   const s = (t || "").toLowerCase();
 
@@ -615,7 +614,7 @@ function getStatusStyleKey(t) {
   return "default";
 }
 
-// 讀取 fishorder.csv
+// 讀取 CSV
 window.addEventListener("DOMContentLoaded", () => {
   const statusEl      = document.getElementById("loadStatus");
   const searchInputEl = document.getElementById("searchValue");
@@ -635,7 +634,7 @@ window.addEventListener("DOMContentLoaded", () => {
     })
     .then(text => {
       parseRawData(text);
-      statusEl.textContent = `已載入訂單資料，共 ${rows.length} 筆。`;
+      statusEl.textContent = "已載入訂單資料，共 " + rows.length + " 筆。";
     })
     .catch(err => {
       console.error(err);
@@ -665,6 +664,7 @@ function parseRawData(raw) {
   });
 }
 
+// ===== 主搜尋邏輯 =====
 function searchOrder() {
   const keyword = document.getElementById("searchValue").value.trim().toLowerCase();
   const out     = document.getElementById("result");
@@ -691,7 +691,7 @@ function searchOrder() {
   const hasRemainTwd     = headerKeys.includes(COL_REMAIN_TWD);
 
   if (!hasMember && !hasCustomer && !hasEmail) {
-    out.innerHTML = `<div class="empty">資料中沒有「會員編號／客人名稱／信箱」欄位，請確認 CSV 標題。</div>`;
+    out.innerHTML = '<div class="empty">資料中沒有「會員編號／客人名稱／信箱」欄位，請確認 CSV 標題。</div>';
     return;
   }
 
@@ -719,12 +719,12 @@ function searchOrder() {
   const firstRow = matches[0];
 
   // ========= 客人資訊 =========
-  html += `<div class="section-title"><span class="section-title-icon">👤</span> 客人資訊</div>`;
-  html += `<div class="customer-box"><ul>`;
-  if (hasMember)   html += `<li>會員編號：${firstRow[COL_MEMBER]   || ""}</li>`;
-  if (hasCustomer) html += `<li>客人名稱：${firstRow[COL_CUSTOMER] || ""}</li>`;
-  if (hasEmail)    html += `<li>信箱：${firstRow[COL_EMAIL]        || ""}</li>`;
-  html += `</ul></div>`;
+  html += '<div class="section-title"><span class="section-title-icon">👤</span> 客人資訊</div>';
+  html += '<div class="customer-box"><ul>';
+  if (hasMember)   html += '<li>會員編號：' + (firstRow[COL_MEMBER]   || "") + '</li>';
+  if (hasCustomer) html += '<li>客人名稱：' + (firstRow[COL_CUSTOMER] || "") + '</li>';
+  if (hasEmail)    html += '<li>信箱：'     + (firstRow[COL_EMAIL]    || "") + '</li>';
+  html += '</ul></div>';
 
   // ========= 商品列表 & 小計 =========
   const hasItem   = headerKeys.includes(COL_ITEM);
@@ -735,7 +735,6 @@ function searchOrder() {
   const hasUrl    = headerKeys.includes(COL_URL);
   const hasNote   = headerKeys.includes(COL_NOTE);
 
-  // 小計（未完成部分）
   let activeCount      = 0;
   let totalTwd         = 0;
   let totalWeightGram  = 0;
@@ -766,7 +765,6 @@ function searchOrder() {
       if (w !== null) totalWeightGram += w * qty;
     }
 
-    // 付款狀態：未付款 / 部分付款 / 已全額付款
     if (hasPaymentStatus && hasPrice) {
       const ps = (r[COL_PAYMENT_STATUS] || "").trim() || "未付款";
       if (ps === "部分付款" && hasRemainTwd) {
@@ -782,7 +780,6 @@ function searchOrder() {
     }
   });
 
-  // 若還沒加付款欄位，就視為全部未付款
   if (!headerKeys.includes(COL_PAYMENT_STATUS) && hasPrice) {
     needPayTwd = totalTwd;
   }
@@ -792,77 +789,74 @@ function searchOrder() {
     const totalTwdText = "NT$ " + totalTwd.toLocaleString("zh-TW");
     const weightText   = totalWeightGram ? formatTotalWeight(totalWeightGram) : "";
     const needPayText  = "NT$ " + needPayTwd.toLocaleString("zh-TW");
-    summaryHtml = `
-      <div class="summary-box">
-        🧾 未完成訂單 ${activeCount} 筆｜總額 <b>${totalTwdText}</b>${weightText ? \`｜總重量 ${weightText}\` : ""}<br>
-        <span style="display:inline-block;margin-top:4px;">[ 還需收款 <b>${needPayText}</b> ]</span>
-      </div>
-    `;
+
+    summaryHtml =
+      '<div class="summary-box">' +
+      '🧾 未完成訂單 ' + activeCount + ' 筆｜總額 <b>' + totalTwdText + '</b>' +
+      (weightText ? '｜總重量 ' + weightText : '') +
+      '<br><span style="display:inline-block;margin-top:4px;">[ 還需收款 <b>' + needPayText + '</b> ]</span>' +
+      '</div>';
   } else {
-    summaryHtml = `<div class="summary-box">目前沒有未完成的訂單，以下為已完成紀錄。</div>`;
+    summaryHtml = '<div class="summary-box">目前沒有未完成的訂單，以下為已完成紀錄。</div>';
   }
 
-  // ========== 沒有商品欄位：簡易顯示 ==========
+  // 若沒有商品欄位：簡易顯示
   if (!hasItem && !hasSpec) {
-    html += `<div class="section-title"><span class="section-title-icon">📦</span> 商品列表（簡易顯示）</div>`;
+    html += '<div class="section-title"><span class="section-title-icon">📦</span> 商品列表（簡易顯示）</div>';
     html += summaryHtml;
 
     matches.forEach((r, idx) => {
       const stText = hasStatus ? (r[COL_STATUS] || "") : "";
       const stKey  = hasStatus ? getStatusStyleKey(stText) : "default";
-      html += `<div class="card card--${stKey}" data-status="${stKey}">`;
-      html += `
-        <div class="card-header" onclick="toggleCardBody(this)">
-          <div class="card-main">
-            <div class="card-title">
-              第 ${idx + 1} 筆訂單
-              ${hasStatus ? `<span class="badge badge--${stKey}">${stText}</span>` : ""}
-            </div>
-          </div>
-          <div class="card-toggle-icon">⌄</div>
-        </div>
-      `;
-      html += `<div class="card-body${idx === 0 ? " open" : ""}">`;
+      html += '<div class="card card--' + stKey + '" data-status="' + stKey + '">';
+      html +=
+        '<div class="card-header" onclick="toggleCardBody(this)">' +
+          '<div class="card-main">' +
+            '<div class="card-title">' +
+              '第 ' + (idx + 1) + ' 筆訂單' +
+              (hasStatus ? '<span class="badge badge--' + stKey + '">' + stText + '</span>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div class="card-toggle-icon">⌄</div>' +
+        '</div>';
+
+      html += '<div class="card-body' + (idx === 0 ? ' open' : '') + '">';
       headerKeys.forEach(k => {
         let v = r[k] || "";
-        if (k === COL_DATE || k === COL_SHIPDATE) {
-          v = formatDateDisplay(v);
-        }
-        html += `<div class="card-body-row">${k}：${v}</div>`;
+        if (k === COL_DATE || k === COL_SHIPDATE) v = formatDateDisplay(v);
+        html += '<div class="card-body-row">' + k + '：' + v + '</div>';
       });
-      html += `</div></div>`;
+      html += '</div></div>';
     });
 
-    html += `
-      <div class="info-box">
-        🔔 如對訂單進度有任何疑問，請將此畫面截圖，並透過 LINE 官方帳號與我們聯繫。<br>
-        目前因為 CSV 標題中沒有「商品名稱 / 款式」欄位，暫以原始欄位顯示。
-      </div>
-    `;
+    html +=
+      '<div class="info-box">' +
+      '🔔 如對訂單進度有任何疑問，請將此畫面截圖，並透過 LINE 官方帳號與我們聯繫。<br>' +
+      '目前因為 CSV 標題中沒有「商品名稱 / 款式」欄位，暫以原始欄位顯示。' +
+      '</div>';
     html += statusLegendHtml();
     out.innerHTML = html;
     return;
   }
 
-  // ========== 一般「商品列表」版本 ==========
-  html += `<div class="section-title"><span class="section-title-icon">📦</span> 商品列表</div>`;
+  // ===== 一般「商品列表」版本 =====
+  html += '<div class="section-title"><span class="section-title-icon">📦</span> 商品列表</div>';
   html += summaryHtml;
 
   // 狀態篩選 select（預設：未完成）
-  html += `
-    <div class="filter-bar">
-      <label>狀態：
-        <select id="statusFilter">
-          <option value="not-completed">未完成（預設）</option>
-          <option value="all">全部</option>
-          <option value="pending">未處理 / 待確認</option>
-          <option value="processing">處理中 / 已下單</option>
-          <option value="arrived">已到貨 / 已抵台</option>
-          <option value="done">已結單</option>
-        </select>
-      </label>
-    </div>
-  `;
+  html +=
+    '<div class="filter-bar">' +
+      '<label>狀態：' +
+        '<select id="statusFilter">' +
+          '<option value="not-completed">未完成（預設）</option>' +
+          '<option value="all">全部</option>' +
+          '<option value="pending">未處理 / 待確認</option>' +
+          '<option value="processing">處理中 / 已下單</option>' +
+          '<option value="arrived">已到貨 / 已抵台</option>' +
+          '<option value="done">已結單</option>' +
+        '</select>' +
+      '</label>' +
+    '</div>';
 
   // 依 商品名稱 + 款式 分組
   const group = {};
@@ -895,33 +889,33 @@ function searchOrder() {
     const statusText     = hasStatus ? (last[COL_STATUS] || "") : "";
     const statusKeyStyle = hasStatus ? getStatusStyleKey(statusText) : "default";
 
-    html += `<div class="card card--${statusKeyStyle}" data-status="${statusKeyStyle}">`;
+    html += '<div class="card card--' + statusKeyStyle + '" data-status="' + statusKeyStyle + '">';
 
-    // header：商品名稱 + 小小狀態欄（badge）
-    html += `
-      <div class="card-header" onclick="toggleCardBody(this)">
-        <div class="card-main">
-          <div class="card-title">
-            ${itemVal || "未填商品"}${specVal ? \`（${specVal}）\` : ""}
-            ${hasStatus ? `<span class="badge badge--${statusKeyStyle}">${statusText}</span>` : ""}
-          </div>
-          <div class="card-subline">
-            <span>數量：${qtyTotal}</span>
-            ${
-              hasPrice
-                ? `<span>金額：${list[0][COL_PRICE] || ""}${total ? \`（合計：${total}）\` : ""}</span>`
-                : ""
-            }
-          </div>
-        </div>
-        <div class="card-toggle-icon">⌄</div>
-      </div>
-    `;
+    // header：商品名稱 + 小狀態 badge
+    html +=
+      '<div class="card-header" onclick="toggleCardBody(this)">' +
+        '<div class="card-main">' +
+          '<div class="card-title">' +
+            (itemVal || "未填商品") + (specVal ? '（' + specVal + '）' : '') +
+            (hasStatus ? '<span class="badge badge--' + statusKeyStyle + '">' + statusText + '</span>' : '') +
+          '</div>' +
+          '<div class="card-subline">' +
+            '<span>數量：' + qtyTotal + '</span>' +
+            (hasPrice
+              ? '<span>金額：' + (list[0][COL_PRICE] || "") +
+                (total ? '（合計：' + total + '）' : '') +
+                '</span>'
+              : ''
+            ) +
+          '</div>' +
+        '</div>' +
+        '<div class="card-toggle-icon">⌄</div>' +
+      '</div>';
 
     // body
-    html += `<div class="card-body${idx === 0 ? " open" : ""}">`;
+    html += '<div class="card-body' + (idx === 0 ? ' open' : '') + '">';
 
-    // 💰 收款狀態（有欄位就顯示）
+    // 💰 收款狀態
     if (headerKeys.includes(COL_PAYMENT_STATUS)) {
       const psRaw = (last[COL_PAYMENT_STATUS] || "").trim();
       const ps = psRaw || "未付款";
@@ -935,12 +929,12 @@ function searchOrder() {
         if (headerKeys.includes(COL_REMAIN_TWD)) {
           const rem = parseNumberSafe(last[COL_REMAIN_TWD]);
           if (rem !== null) {
-            remainText = `（剩餘 NT$ ${rem.toLocaleString("zh-TW")}）`;
+            remainText = "（剩餘 NT$ " + rem.toLocaleString("zh-TW") + "）";
           }
         }
         line = "💰 收款狀態：部分付款 " + remainText;
       }
-      html += `<div class="card-body-row">${line}</div>`;
+      html += '<div class="card-body-row">' + line + '</div>';
     }
 
     // ⚖ 重量：100g / 預計國際運費：$25
@@ -948,16 +942,17 @@ function searchOrder() {
     let intlStr   = "";
     if (headerKeys.includes(COL_WEIGHT) && last[COL_WEIGHT]) {
       const w = parseNumberSafe(last[COL_WEIGHT]);
-      weightStr = (w !== null) ? `${w}g` : `${last[COL_WEIGHT]}g`;
+      weightStr = (w !== null) ? (w + "g") : (last[COL_WEIGHT] + "g");
     }
     if (headerKeys.includes(COL_INTL_FEE) && last[COL_INTL_FEE]) {
       const fee = parseNumberSafe(last[COL_INTL_FEE]);
       intlStr = (fee !== null)
-        ? `$${fee.toLocaleString("zh-TW")}`
-        : `$${last[COL_INTL_FEE]}`;
+        ? ("$" + fee.toLocaleString("zh-TW"))
+        : ("$" + last[COL_INTL_FEE]);
     }
     if (weightStr || intlStr) {
-      html += `<div class="card-body-row">⚖ 重量：${weightStr || "—"} / 預計國際運費：${intlStr || "—"}</div>`;
+      html += '<div class="card-body-row">⚖ 重量：' + (weightStr || "—") +
+              ' / 預計國際運費：' + (intlStr || "—") + '</div>';
     }
 
     // ✅ 金額已含國際運費
@@ -965,34 +960,35 @@ function searchOrder() {
       const v = (last[COL_INTL_INC] || "").toString().toLowerCase();
       const isIncluded = ["true","yes","1","是","y"].some(t => v.includes(t));
       if (isIncluded) {
-        html += `<div class="card-body-row">✅ 金額已含國際運費</div>`;
+        html += '<div class="card-body-row">✅ 金額已含國際運費</div>';
       }
     }
 
     if (hasUrl && last[COL_URL]) {
-      html += `<div class="card-body-row">🔗 商品連結：<a class="link-btn" href="${last[COL_URL]}" target="_blank" rel="noopener noreferrer">查看商品頁</a></div>`;
+      html += '<div class="card-body-row">🔗 商品連結：<a class="link-btn" href="' +
+              last[COL_URL] + '" target="_blank" rel="noopener noreferrer">查看商品頁</a></div>';
     }
     if (noteCombined) {
-      html += `<div class="card-body-row">📝 備註：${noteCombined}</div>`;
+      html += '<div class="card-body-row">📝 備註：' + noteCombined + '</div>';
     }
     if (hasShipDate && last[COL_SHIPDATE]) {
-      html += `<div class="card-body-row">🚚 出貨日期：${formatDateDisplay(last[COL_SHIPDATE])}</div>`;
+      html += '<div class="card-body-row">🚚 出貨日期：' +
+              formatDateDisplay(last[COL_SHIPDATE]) + '</div>';
     }
     if (hasDate && last[COL_DATE]) {
-      html += `<div class="card-body-row">📅 更新日期：${formatDateDisplay(last[COL_DATE])}</div>`;
+      html += '<div class="card-body-row">📅 更新日期：' +
+              formatDateDisplay(last[COL_DATE]) + '</div>';
     }
-    html += `</div>`; // end body
-    html += `</div>`; // end card
+    html += '</div></div>';
   });
 
-  html += `
-    <div class="info-box">
-      🔔 如對訂單進度有任何疑問，請將此畫面截圖，並透過 LINE 官方帳號與我們聯繫。<br>
-      我們會依照畫面中的「訂單狀態」與「更新日期 / 出貨日期」為您確認最新情況。🙏
-    </div>
-  `;
+  html +=
+    '<div class="info-box">' +
+    '🔔 如對訂單進度有任何疑問，請將此畫面截圖，並透過 LINE 官方帳號與我們聯繫。<br>' +
+    '我們會依照畫面中的「訂單狀態」與「更新日期 / 出貨日期」為您確認最新情況。🙏' +
+    '</div>';
 
-  // 歷史訂單（依出貨日期統整）
+  // 歷史訂單
   if (hasStatus && (hasShipDate || hasDate)) {
     const doneRows = matches.filter(r => getStatusStyleKey(r[COL_STATUS]) === "done");
     html += buildHistoryByDateSection(doneRows, hasItem, hasSpec, hasQty, hasPrice, hasShipDate, hasDate);
@@ -1001,32 +997,32 @@ function searchOrder() {
   html += statusLegendHtml();
   out.innerHTML = html;
 
-  // 狀態篩選（取代 checkbox）
   setupStatusFilter();
 }
 
+// ===== 其他小工具 =====
 function statusLegendHtml() {
-  return `
-    <div class="status-legend">
-      <div>📌 狀態說明（給您參考）</div>
-      <ul>
-        <li><span class="legend-dot legend-dot-pending"></span>「未處理 / 待確認」：尚未處理或等待中</li>
-        <li><span class="legend-dot legend-dot-processing"></span>「處理中 / 準備中 / 已下單」：訂單已在處理流程中</li>
-        <li><span class="legend-dot legend-dot-arrived"></span>「已到貨 / 抵台」：商品已抵達日本或台灣，準備後續出貨</li>
-        <li><span class="legend-dot legend-dot-done"></span>「已出貨 / 已完成 / 結單」：此商品已處理完畢，會出現在歷史訂單。</li>
-      </ul>
-    </div>
-  `;
+  return (
+    '<div class="status-legend">' +
+      '<div>📌 狀態說明（給您參考）</div>' +
+      '<ul>' +
+        '<li><span class="legend-dot legend-dot-pending"></span>「未處理 / 待確認」：尚未處理或等待中</li>' +
+        '<li><span class="legend-dot legend-dot-processing"></span>「處理中 / 準備中 / 已下單」：訂單已在處理流程中</li>' +
+        '<li><span class="legend-dot legend-dot-arrived"></span>「已到貨 / 抵台」：商品已抵達日本或台灣，準備後續出貨</li>' +
+        '<li><span class="legend-dot legend-dot-done"></span>「已出貨 / 已完成 / 結單」：此商品已處理完畢，會出現在歷史訂單。</li>' +
+      '</ul>' +
+    '</div>'
+  );
 }
 
 function buildHistoryByDateSection(doneRows, hasItem, hasSpec, hasQty, hasPrice, hasShipDate, hasDate) {
   if (!doneRows || !doneRows.length) {
-    return `
-      <div class="history-box">
-        <div class="history-title">📘 歷史訂單（已結單）</div>
-        <div class="history-empty">目前尚無已結單的商品，完成出貨後會顯示在這裡。</div>
-      </div>
-    `;
+    return (
+      '<div class="history-box">' +
+        '<div class="history-title">📘 歷史訂單（已結單）</div>' +
+        '<div class="history-empty">目前尚無已結單的商品，完成出貨後會顯示在這裡。</div>' +
+      '</div>'
+    );
   }
 
   const dateGroup = {};
@@ -1056,77 +1052,65 @@ function buildHistoryByDateSection(doneRows, hasItem, hasSpec, hasQty, hasPrice,
       const specVal = hasSpec ? (r[COL_SPEC] || "") : "";
       const key = itemVal + "||" + specVal;
       if (!itemGroup[key]) {
-        itemGroup[key] = {
-          item: itemVal,
-          spec: specVal,
-          qty: 0,
-          price: null
-        };
+        itemGroup[key] = { item: itemVal, spec: specVal, qty: 0, price: null };
       }
       const q = hasQty ? parseQuantityNumber(r[COL_QTY]) : 1;
       itemGroup[key].qty += q;
 
       if (hasPrice) {
         const p = parsePriceNumber(r[COL_PRICE]);
-        if (p !== null) {
-          itemGroup[key].price = p;
-        }
+        if (p !== null) itemGroup[key].price = p;
       }
     });
 
     let dayTotal = 0;
     const itemLines = Object.values(itemGroup).map(info => {
       const labelItem = info.item || "未填商品";
-      const labelSpec = info.spec ? `（${info.spec}）` : "";
-      const label = `${labelItem}${labelSpec} x${info.qty}`;
+      const labelSpec = info.spec ? '（' + info.spec + '）' : '';
+      const label = labelItem + labelSpec + ' x' + info.qty;
       totalDoneQty += info.qty;
 
       if (hasPrice && info.price !== null) {
         const sub = info.price * info.qty;
         dayTotal += sub;
-        return `${label}（小計 ¥${sub.toLocaleString("ja-JP")}）`;
+        return label + '（小計 ¥' + sub.toLocaleString("ja-JP") + '）';
       } else {
         return label;
       }
     });
 
-    if (hasPrice) {
-      totalDoneAmount += dayTotal;
-    }
+    if (hasPrice) totalDoneAmount += dayTotal;
 
-    rowsHtml += `
-      <tr>
-        <td>${dateStr}</td>
-        <td>${itemLines.join(" / ")}</td>
-        <td>${hasPrice && dayTotal ? `¥ ${dayTotal.toLocaleString("ja-JP")}` : ""}</td>
-      </tr>
-    `;
+    rowsHtml +=
+      '<tr>' +
+        '<td>' + dateStr + '</td>' +
+        '<td>' + itemLines.join(" / ") + '</td>' +
+        '<td>' + (hasPrice && dayTotal ? '¥ ' + dayTotal.toLocaleString("ja-JP") : '') + '</td>' +
+      '</tr>';
   });
 
-  return `
-    <div class="history-box">
-      <div class="history-title">📘 歷史訂單（依出貨日期統整）</div>
-      <div class="history-summary">
-        已結單商品共 <b>${totalDoneQty}</b> 件${
-          (totalDoneAmount && !isNaN(totalDoneAmount))
-            ? `，累計金額約 <b>¥ ${totalDoneAmount.toLocaleString("ja-JP")}</b>`
-            : ""
-        }
-      </div>
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th>出貨日期</th>
-            <th>出貨商品</th>
-            <th>當日小計</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml}
-        </tbody>
-      </table>
-    </div>
-  `;
+  return (
+    '<div class="history-box">' +
+      '<div class="history-title">📘 歷史訂單（依出貨日期統整）</div>' +
+      '<div class="history-summary">' +
+        '已結單商品共 <b>' + totalDoneQty + '</b> 件' +
+        (totalDoneAmount && !isNaN(totalDoneAmount)
+          ? '，累計金額約 <b>¥ ' + totalDoneAmount.toLocaleString("ja-JP") + '</b>'
+          : ''
+        ) +
+      '</div>' +
+      '<table class="history-table">' +
+        '<thead>' +
+          '<tr>' +
+            '<th>出貨日期</th>' +
+            '<th>出貨商品</th>' +
+            '<th>當日小計</th>' +
+          '</tr>' +
+        '</thead>' +
+        '<tbody>' + rowsHtml + '</tbody>' +
+      '</table>' +
+    '</div>'
+  );
 }
 
 // 展開 / 收合卡片
@@ -1136,7 +1120,7 @@ function toggleCardBody(headerEl) {
   body.classList.toggle("open");
 }
 
-// 狀態篩選（取代 checkbox）：預設顯示「未完成」。
+// 狀態篩選：預設顯示「未完成」
 function setupStatusFilter() {
   const sel = document.getElementById("statusFilter");
   if (!sel) return;
