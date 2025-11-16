@@ -7,449 +7,329 @@
 
   <style>
     /* ========= 共用樣式 ========= */
-    body {
-      font-family: "Zen Maru Gothic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #FFF6E7;
-      padding: 24px;
-      margin: 0;
-      color: #333;
-    }
-
-    .wrap {
-      max-width: 720px;
-      margin: 0 auto;
-      background: #FFFDF7;
-      border-radius: 18px;
-      padding: 20px 20px 24px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-      box-sizing: border-box;
-    }
-
-    h1 {
-      font-size: 24px;
-      text-align: center;
-      margin: 0 0 8px;
-      letter-spacing: 1px;
-    }
-
-    h1 span {
-      font-size: 26px;
-    }
-
-    .subtitle {
-      font-size: 12px;
-      text-align: center;
-      color: #87613B;
-      margin-bottom: 14px;
-    }
-
-    .status-text {
-      font-size: 12px;
-      color: #555;
-      margin: 2px 0 10px;
-      line-height: 1.5;
-    }
-
-    label {
-      font-size: 14px;
-      display: block;
-      margin: 8px 0 4px;
-    }
-
-    /* ========= 搜尋區塊 ========= */
-    .search-block {
-      margin-bottom: 6px;
-    }
-
-    .search-row-select {
-      margin-bottom: 6px;
-    }
-
-    .search-row-select select {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid #FFD6A0;
-      padding: 10px 12px;
-      background: #FFFDF8;
-      font-size: 14px;
-      box-sizing: border-box;
-    }
-
-    .search-inline {
-      display: flex;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .search-inline input[type="text"] {
-      flex: 1 1 auto;
-      border-radius: 999px 0 0 999px;
-      border: 1px solid #FFB96A;
-      border-right: none;
-      padding: 10px 12px;
-      font-size: 14px;
-      background: #FFFDF8;
-      box-sizing: border-box;
-    }
-
-    .search-inline button {
-      flex: 0 0 auto;
-      border-radius: 0 999px 999px 0;
-      border: 1px solid #FFB96A;
-      background: #FFB763;
-      padding: 10px 16px;
-      font-size: 14px;
-      cursor: pointer;
-      font-weight: 600;
-      box-shadow: 0 3px 0 #E39A3C;
-      margin: 0;
-    }
-
-    .search-inline button:active {
-      transform: translateY(2px);
-      box-shadow: 0 1px 0 #E39A3C;
-    }
-
-    .tip {
-      font-size: 12px;
-      color: #777;
-      margin-top: 6px;
-      line-height: 1.4;
-    }
-
-    .result {
-      margin-top: 16px;
-    }
-
-    .section-title {
-      font-size: 15px;
-      font-weight: 700;
-      margin: 16px 0 8px;
-      color: #8B5E2C;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .section-title-icon {
-      font-size: 14px;
-    }
-
-    .customer-box {
-      background: #FFF4DA;
-      border-radius: 12px;
-      padding: 10px 12px;
-      border: 1px solid #FFD8A8;
-      font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 4px;
-      list-style: none;
-    }
-
-    .customer-box ul {
-      margin: 0;
-      padding-left: 18px;
-    }
-
-    .info-box {
-      margin-top: 12px;
-      font-size: 13px;
-      background: #FFF0D8;
-      border-radius: 12px;
-      padding: 10px 12px;
-      border: 1px dashed #FFBC75;
-      color: #555;
-      line-height: 1.5;
-    }
-
-    .empty {
-      font-size: 14px;
-      color: #999;
-      text-align: center;
-      margin-top: 12px;
-    }
-
-    /* ====== 商品小結（總件數＋總金額） ====== */
-    .summary-box {
-      font-size: 13px;
-      background: #FFF4E0;
-      border-radius: 10px;
-      padding: 6px 10px;
-      margin-bottom: 6px;
-      color: #704214;
-    }
-
-    .summary-box b {
-      font-weight: 700;
-    }
-
-    /* ====== 篩選區（顯示已完成勾勾） ====== */
-    .filter-bar {
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 8px;
-      color: #555;
-    }
-
-    .filter-bar input[type="checkbox"] {
-      margin-right: 4px;
-      accent-color: #69DB7C;
-    }
-
-    /* ====== 狀態 legend ====== */
-    .status-legend {
-      margin-top: 10px;
-      font-size: 12px;
-      background: #FFFDF5;
-      border-radius: 10px;
-      padding: 8px 10px;
-      border: 1px dashed #FFE0B2;
-      color: #555;
-    }
-
-    .status-legend ul {
-      margin: 6px 0 0;
-      padding-left: 18px;
-    }
-
-    .status-legend li {
-      margin-bottom: 3px;
-      list-style: none;
-    }
-
-    .legend-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 6px;
-      vertical-align: middle;
-    }
-
-    .legend-dot-pending {
-      background: #FFD8A8;
-    }
-
-    .legend-dot-processing {
-      background: #FFC9C9;
-    }
-
-    .legend-dot-arrived {
-      background: #91A7FF;
-    }
-
-    .legend-dot-done {
-      background: #8CE99A;
-    }
-
-    /* ====== 歷史訂單（依出貨日期統整） ====== */
-    .history-box {
-      margin-top: 16px;
-      font-size: 13px;
-      background: #F5F0FF;
-      border-radius: 12px;
-      padding: 10px 12px;
-      border: 1px dashed #B197FC;
-      color: #4B3F72;
-    }
-
-    .history-title {
-      font-weight: 700;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .history-summary {
-      margin-bottom: 6px;
-    }
-
-    .history-summary b {
-      font-weight: 700;
-    }
-
-    .history-empty {
-      font-size: 12px;
-      color: #777;
-    }
-
-    .history-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 4px;
-      font-size: 12px;
-    }
-
-    .history-table th,
-    .history-table td {
-      border-bottom: 1px solid #E5DBFF;
-      padding: 4px 2px;
-      text-align: left;
-      vertical-align: top;
-    }
-
-    .history-table th:nth-child(1),
-    .history-table td:nth-child(1) {
-      width: 18%;
-      white-space: nowrap;
-    }
-
-    .history-table th:nth-child(2),
-    .history-table td:nth-child(2) {
-      width: 62%;
-    }
-
-    .history-table th:nth-child(3),
-    .history-table td:nth-child(3) {
-      width: 20%;
-      white-space: nowrap;
-      text-align: right;
-    }
-
-    /* ===== 卡片（商品） ===== */
-    .card {
-      border-radius: 14px;
-      padding: 10px 12px;
-      margin-bottom: 10px;
-      border: 1px solid #FFD7B0;
-      background: #FFF7E6;
-      font-size: 14px;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    .card--pending {
-      background: #FFF7E6;
-      border-color: #FFD8A8;
-    }
-
-    .card--processing {
-      background: #FFF3D9;
-      border-color: #FFC078;
-    }
-
-    .card--arrived {
-      background: #E8F4FF;
-      border-color: #74C0FC;
-    }
-
-    .card--done {
-      background: #E7FBEF;
-      border-color: #69DB7C;
-    }
-
-    .card--default {
-      background: #F8F9FA;
-      border-color: #CED4DA;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      gap: 8px;
-    }
-
-    .card-main {
-      flex: 1 1 auto;
-      min-width: 0;
-    }
-
-    .card-title {
-      font-weight: 700;
-      margin-bottom: 2px;
-      color: #7A4D1A;
-      font-size: 15px;
-    }
-
-    .card-subline {
-      font-size: 13px;
-      color: #555;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .card-subline span {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .card-toggle-icon {
-      font-size: 16px;
-      flex: 0 0 auto;
-      color: #996633;
-      transform: translateY(1px);
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 1px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      margin-left: 4px;
-      white-space: nowrap;
-    }
-
-    .badge--pending {
-      background: #FFE8CC;
-      color: #D9480F;
-    }
-
-    .badge--processing {
-      background: #FFE3E3;
-      color: #C92A2A;
-    }
-
-    .badge--arrived {
-      background: #DCEFFF;
-      color: #1C7ED6;
-    }
-
-    .badge--done {
-      background: #D3F9D8;
-      color: #2B8A3E;
-    }
-
-    .badge--default {
-      background: #E9ECEF;
-      color: #495057;
-    }
-
-    .card-body {
-      margin-top: 8px;
-      font-size: 13px;
-      line-height: 1.6;
-      display: none;
-    }
-
-    .card-body.open {
-      display: block;
-    }
-
-    .card-body-row {
-      margin-bottom: 3px;
-    }
-
-    .link-btn {
-      display: inline-block;
-      padding: 4px 9px;
-      border-radius: 10px;
-      font-size: 12px;
-      text-decoration: none;
-      border: 1px solid #FFB963;
-      background: #FFF;
-      margin-top: 3px;
-    }
-
-    .link-btn:hover {
-      background: #FFF3E0;
-    }
+    /* ========= 共用樣式（置中美觀版） ========= */
+body {
+  font-family: "Zen Maru Gothic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #FFF6E7;
+  padding: 24px;
+  margin: 0;
+  color: #333;
+}
+
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  background: #FFFDF7;
+  border-radius: 18px;
+  padding: 20px 20px 24px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 24px;
+  text-align: center;
+  margin: 0 0 8px;
+  letter-spacing: 1px;
+}
+
+h1 span {
+  font-size: 26px;
+}
+
+.subtitle {
+  font-size: 12px;
+  text-align: center;
+  color: #87613B;
+  margin-bottom: 14px;
+}
+
+.status-text {
+  font-size: 12px;
+  color: #555;
+  margin: 2px 0 10px;
+  line-height: 1.5;
+}
+
+label {
+  font-size: 14px;
+  display: block;
+  margin: 8px 0 4px;
+}
+
+/* ========= 搜尋區塊 ========= */
+.search-block {
+  margin-bottom: 6px;
+}
+
+/* 選擇 + 搜尋排列成同一行 */
+.search-row-flex {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.search-row-flex select {
+  flex: 0 0 34%;
+  border-radius: 12px;
+  border: 1px solid #FFD6A0;
+  padding: 10px 12px;
+  background: #FFFDF8;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.search-row-flex input[type="text"] {
+  flex: 1;
+  border-radius: 12px;
+  border: 1px solid #FFB96A;
+  padding: 10px 12px;
+  background: #FFFDF8;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.search-row-flex button {
+  flex: 0 0 auto;
+  border-radius: 12px;
+  border: 1px solid #FFB96A;
+  background: #FFB763;
+  padding: 10px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 3px 0 #E39A3C;
+}
+
+/* 按下變低一點 */
+.search-row-flex button:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #E39A3C;
+}
+
+.tip {
+  font-size: 12px;
+  color: #777;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.result {
+  margin-top: 16px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 16px 0 8px;
+  color: #8B5E2C;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.section-title-icon {
+  font-size: 14px;
+}
+
+/* ========= 客人資訊 ========= */
+.customer-box {
+  background: #FFF4DA;
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid #FFD8A8;
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 4px;
+  list-style: none;
+}
+
+.customer-box ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.info-box {
+  margin-top: 12px;
+  font-size: 13px;
+  background: #FFF0D8;
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px dashed #FFBC75;
+  color: #555;
+  line-height: 1.5;
+}
+
+.empty {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* ====== 小計 ====== */
+.summary-box {
+  font-size: 13px;
+  background: #FFF4E0;
+  border-radius: 10px;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  color: #704214;
+}
+
+.summary-box b {
+  font-weight: 700;
+}
+
+/* ====== 篩選區 ====== */
+.filter-bar {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+/* ====== 狀態 legend ====== */
+.status-legend {
+  margin-top: 10px;
+  font-size: 12px;
+  background: #FFFDF5;
+  border-radius: 10px;
+  padding: 8px 10px;
+  border: 1px dashed #FFE0B2;
+  color: #555;
+}
+
+.status-legend ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+.status-legend li {
+  margin-bottom: 3px;
+  list-style: none;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.legend-dot-pending { background: #FFD8A8; }
+.legend-dot-processing { background: #FFC9C9; }
+.legend-dot-arrived { background: #91A7FF; }
+.legend-dot-done { background: #8CE99A; }
+
+/* ===== 卡片 ===== */
+.card {
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border: 1px solid #FFD7B0;
+  background: #FFF7E6;
+  font-size: 14px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.card--pending { background: #FFF7E6; border-color: #FFD8A8; }
+.card--processing { background: #FFF3D9; border-color: #FFC078; }
+.card--arrived { background: #E8F4FF; border-color: #74C0FC; }
+.card--done { background: #E7FBEF; border-color: #69DB7C; }
+.card--default { background: #F8F9FA; border-color: #CED4DA; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.card-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.card-title {
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: #7A4D1A;
+  font-size: 15px;
+}
+
+.card-subline {
+  font-size: 13px;
+  color: #555;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-subline span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.card-toggle-icon {
+  font-size: 16px;
+  flex: 0 0 auto;
+  color: #996633;
+  transform: translateY(1px);
+}
+
+.badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
+.badge--pending { background: #FFE8CC; color: #D9480F; }
+.badge--processing { background: #FFE3E3; color: #C92A2A; }
+.badge--arrived { background: #DCEFFF; color: #1C7ED6; }
+.badge--done { background: #D3F9D8; color: #2B8A3E; }
+.badge--default { background: #E9ECEF; color: #495057; }
+
+.card-body {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  display: none;
+}
+
+.card-body.open {
+  display: block;
+}
+
+.card-body-row {
+  margin-bottom: 3px;
+}
+
+.link-btn {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 10px;
+  font-size: 12px;
+  text-decoration: none;
+  border: 1px solid #FFB963;
+  background: #FFF;
+  margin-top: 3px;
+}
+
+.link-btn:hover {
+  background: #FFF3E0;
+}
 
     /* ========= 手機 RWD ========= */
     @media (max-width: 768px) {
@@ -530,29 +410,34 @@
 let rows = [];
 let headerKeys = [];
 
-/* 固定欄位名稱（照你的 CSV / Notion） */
-const COL_EMAIL    = "信箱";
-const COL_MEMBER   = "會員編號";
-const COL_LINE     = "LINE名稱";      // 目前只是保留，不再用來搜尋
-const COL_CUSTOMER = "客人名稱";      // 主要用來搜尋＆顯示的名稱
-const COL_ITEM     = "商品名稱";
-const COL_SPEC     = "款式";
-const COL_QTY      = "數量";
-const COL_STATUS   = "狀態";
-const COL_PRICE    = "金額";          // 這裡當作「台幣金額」
-const COL_URL      = "商品網址";
-const COL_NOTE     = "備註";
-const COL_DATE     = "更新日期";
-const COL_SHIPDATE = "出貨日期";
+/* 優先使用的欄位名稱（會再自動偵測調整） */
+const COL_EMAIL_PREF  = "信箱";
+const COL_MEMBER_PREF = "會員編號";
+const COL_LINE_PREF   = "LINE名稱";
+const COL_CUST_PREF   = "客人名稱";
+const COL_ITEM_PREF   = "商品名稱";
+const COL_SPEC_PREF   = "款式";
+const COL_QTY_PREF    = "數量";
+const COL_STATUS_PREF = "狀態";
+const COL_PRICE_PREF  = "金額";
+const COL_URL_PREF    = "商品網址";
+const COL_NOTE_PREF   = "備註";
+const COL_DATE_PREF   = "更新日期";
+const COL_SHIP_PREF   = "出貨日期";
+const COL_WEIGHT_PREF = "重量";
+const COL_INTL_FEE_PREF   = "預計國際運費"; // 你 Notion 應該是用這個
+const COL_INTL_INC_PREF   = "含國際運費";
+const COL_PAY_STATUS_PREF = "付款狀態";
+const COL_REMAIN_TWD_PREF = "剩餘金額";
 
-const COL_WEIGHT   = "重量";          // g
-const COL_INTL_FEE = "國際運費";      // 預計國際運費（台幣）
-const COL_INTL_INC = "含國際運費";
+/* 實際使用的欄位名稱（會由自動偵測決定） */
+let COL_EMAIL, COL_MEMBER, COL_LINE, COL_CUSTOMER,
+    COL_ITEM, COL_SPEC, COL_QTY, COL_STATUS,
+    COL_PRICE, COL_URL, COL_NOTE, COL_DATE, COL_SHIPDATE,
+    COL_WEIGHT, COL_INTL_FEE, COL_INTL_INC,
+    COL_PAYMENT_STATUS, COL_REMAIN_TWD;
 
-const COL_PAYMENT_STATUS = "付款狀態"; // 未付款 / 部分付款 / 已全額付款
-const COL_REMAIN_TWD     = "剩餘金額"; // 只在部分付款時填（台幣）
-
-// ===== 小工具 =====
+// ========== 小工具：日期 / 數字 / 重量 ==========
 function formatDateDisplay(str) {
   if (!str) return "";
   if (/\d{4}-\d{2}-\d{2}T/.test(str)) {
@@ -662,6 +547,37 @@ function parseRawData(raw) {
     headerKeys.forEach((h, i) => o[h] = (cols[i] || "").trim());
     return o;
   });
+
+  autoDetectColumns();
+}
+
+// 根據 header 自動決定實際欄位名稱
+function autoDetectColumns() {
+  const findCol = (preferred, keywords) => {
+    if (preferred && headerKeys.includes(preferred)) return preferred;
+    if (!keywords || !keywords.length) return null;
+    const hit = headerKeys.find(h => keywords.every(k => h.includes(k)));
+    return hit || null;
+  };
+
+  COL_EMAIL   = findCol(COL_EMAIL_PREF,  ["信", "箱"]);
+  COL_MEMBER  = findCol(COL_MEMBER_PREF, ["會員"]);
+  COL_LINE    = findCol(COL_LINE_PREF,   ["LINE","名"]);
+  COL_CUSTOMER= findCol(COL_CUST_PREF,   ["客","名"]);
+  COL_ITEM    = findCol(COL_ITEM_PREF,   ["商品"]);
+  COL_SPEC    = findCol(COL_SPEC_PREF,   ["款"]);
+  COL_QTY     = findCol(COL_QTY_PREF,    ["數"]);
+  COL_STATUS  = findCol(COL_STATUS_PREF, ["狀"]);
+  COL_PRICE   = findCol(COL_PRICE_PREF,  ["金"]);
+  COL_URL     = findCol(COL_URL_PREF,    ["網址"]);
+  COL_NOTE    = findCol(COL_NOTE_PREF,   ["備"]);
+  COL_DATE    = findCol(COL_DATE_PREF,   ["更新","日"]);
+  COL_SHIPDATE= findCol(COL_SHIP_PREF,   ["出貨"]);
+  COL_WEIGHT  = findCol(COL_WEIGHT_PREF, ["重"]);
+  COL_INTL_FEE= findCol(COL_INTL_FEE_PREF, ["國際","運費"]);
+  COL_INTL_INC= findCol(COL_INTL_INC_PREF, ["含","運費"]);
+  COL_PAYMENT_STATUS = findCol(COL_PAY_STATUS_PREF, ["付款"]);
+  COL_REMAIN_TWD     = findCol(COL_REMAIN_TWD_PREF, ["剩","金"]);
 }
 
 // ===== 主搜尋邏輯 =====
@@ -679,26 +595,16 @@ function searchOrder() {
     return;
   }
 
-  const hasEmail         = headerKeys.includes(COL_EMAIL);
-  const hasMember        = headerKeys.includes(COL_MEMBER);
-  const hasCustomer      = headerKeys.includes(COL_CUSTOMER);
-  const hasShipDate      = headerKeys.includes(COL_SHIPDATE);
-  const hasDate          = headerKeys.includes(COL_DATE);
-  const hasWeight        = headerKeys.includes(COL_WEIGHT);
-  const hasIntlFee       = headerKeys.includes(COL_INTL_FEE);
-  const hasIntlInc       = headerKeys.includes(COL_INTL_INC);
-  const hasPaymentStatus = headerKeys.includes(COL_PAYMENT_STATUS);
-  const hasRemainTwd     = headerKeys.includes(COL_REMAIN_TWD);
+  const hasEmail    = !!COL_EMAIL;
+  const hasMember   = !!COL_MEMBER;
+  const hasCustomer = !!COL_CUSTOMER;
 
   if (!hasMember && !hasCustomer && !hasEmail) {
     out.innerHTML = '<div class="empty">資料中沒有「會員編號／客人名稱／信箱」欄位，請確認 CSV 標題。</div>';
     return;
   }
 
-  // 🔍 三種一起查：
-  // 會員編號：完全一致
-  // 信箱：完全一致
-  // 客人名稱：關鍵字包含
+  // 三種一起查：會員編號＝完全一致；信箱＝完全一致；客人名稱＝關鍵字
   const matches = rows.filter(r => {
     const memberVal   = hasMember   ? (r[COL_MEMBER]   || "").toLowerCase() : "";
     const customerVal = hasCustomer ? (r[COL_CUSTOMER] || "").toLowerCase() : "";
@@ -727,13 +633,20 @@ function searchOrder() {
   html += '</ul></div>';
 
   // ========= 商品列表 & 小計 =========
-  const hasItem   = headerKeys.includes(COL_ITEM);
-  const hasSpec   = headerKeys.includes(COL_SPEC);
-  const hasQty    = headerKeys.includes(COL_QTY);
-  const hasStatus = headerKeys.includes(COL_STATUS);
-  const hasPrice  = headerKeys.includes(COL_PRICE);
-  const hasUrl    = headerKeys.includes(COL_URL);
-  const hasNote   = headerKeys.includes(COL_NOTE);
+  const hasItem   = !!COL_ITEM;
+  const hasSpec   = !!COL_SPEC;
+  const hasQty    = !!COL_QTY;
+  const hasStatus = !!COL_STATUS;
+  const hasPrice  = !!COL_PRICE;
+  const hasUrl    = !!COL_URL;
+  const hasNote   = !!COL_NOTE;
+  const hasDate   = !!COL_DATE;
+  const hasShip   = !!COL_SHIPDATE;
+  const hasWeight = !!COL_WEIGHT;
+  const hasIntlFee= !!COL_INTL_FEE;
+  const hasIntlInc= !!COL_INTL_INC;
+  const hasPayStatus = !!COL_PAYMENT_STATUS;
+  const hasRemainTwd = !!COL_REMAIN_TWD;
 
   let activeCount      = 0;
   let totalTwd         = 0;
@@ -741,9 +654,9 @@ function searchOrder() {
   let needPayTwd       = 0;
 
   matches.forEach(r => {
-    const statusKey = hasStatus ? getStatusStyleKey(r[COL_STATUS]) : "default";
-    const isDone    = (statusKey === "done");
-    if (isDone) return;
+    const stText = hasStatus ? (r[COL_STATUS] || "") : "";
+    const statusKey = hasStatus ? getStatusStyleKey(stText) : "default";
+    if (statusKey === "done") return; // 已結單就不算在「未完成」
 
     activeCount += 1;
 
@@ -765,22 +678,40 @@ function searchOrder() {
       if (w !== null) totalWeightGram += w * qty;
     }
 
-    if (hasPaymentStatus && hasPrice) {
-      const ps = (r[COL_PAYMENT_STATUS] || "").trim() || "未付款";
-      if (ps === "部分付款" && hasRemainTwd) {
-        const rem = parseNumberSafe(r[COL_REMAIN_TWD]);
-        if (rem !== null) needPayTwd += rem;
-      } else if (ps === "已全額付款") {
+    // 付款狀態處理
+    if (hasPayStatus && hasPrice) {
+      const raw = (r[COL_PAYMENT_STATUS] || "").trim();
+      const low = raw.toLowerCase();
+      let kind = "unpaid"; // 預設未付款
+
+      if (low.includes("全") && low.includes("額")) {
+        kind = "full";     // 已全額付款
+      } else if (low.includes("部") && low.includes("分")) {
+        kind = "partial";  // 部分付款
+      } else if (low.includes("未") || low.includes("無")) {
+        kind = "unpaid";
+      }
+
+      if (kind === "full") {
         // 不需再收款
-      } else {
-        if (unitPrice !== null) {
-          needPayTwd += unitPrice * qty;
+      } else if (kind === "partial") {
+        if (hasRemainTwd) {
+          const rem = parseNumberSafe(r[COL_REMAIN_TWD]);
+          if (rem !== null) {
+            needPayTwd += rem;
+            return;
+          }
         }
+        // 沒有填剩餘金額，就當作全部未付
+        if (unitPrice !== null) needPayTwd += unitPrice * qty;
+      } else { // 未付款
+        if (unitPrice !== null) needPayTwd += unitPrice * qty;
       }
     }
   });
 
-  if (!headerKeys.includes(COL_PAYMENT_STATUS) && hasPrice) {
+  // 如果根本沒有「付款狀態」欄位，就當作全部未付款
+  if (!hasPayStatus && hasPrice) {
     needPayTwd = totalTwd;
   }
 
@@ -915,48 +846,41 @@ function searchOrder() {
     // body
     html += '<div class="card-body' + (idx === 0 ? ' open' : '') + '">';
 
-    // 💰 收款狀態
-    if (headerKeys.includes(COL_PAYMENT_STATUS)) {
-      const psRaw = (last[COL_PAYMENT_STATUS] || "").trim();
-      const ps = psRaw || "未付款";
-      let line = "";
-      if (ps === "未付款") {
-        line = "💰 收款狀態：未付款";
-      } else if (ps === "已全額付款") {
-        line = "💰 收款狀態：已全額付款";
-      } else if (ps === "部分付款") {
-        let remainText = "";
-        if (headerKeys.includes(COL_REMAIN_TWD)) {
-          const rem = parseNumberSafe(last[COL_REMAIN_TWD]);
-          if (rem !== null) {
-            remainText = "（剩餘 NT$ " + rem.toLocaleString("zh-TW") + "）";
-          }
+    // 💰 收款狀態（顯示文字＋剩餘金額）
+    if (hasPayStatus) {
+      const raw = (last[COL_PAYMENT_STATUS] || "").trim() || "未付款";
+      let line = "💰 收款狀態：" + raw;
+      const low = raw.toLowerCase();
+      const isPartial = low.includes("部") && low.includes("分");
+      if (isPartial && hasRemainTwd) {
+        const rem = parseNumberSafe(last[COL_REMAIN_TWD]);
+        if (rem !== null) {
+          line += "（剩餘 NT$ " + rem.toLocaleString("zh-TW") + "）";
         }
-        line = "💰 收款狀態：部分付款 " + remainText;
       }
       html += '<div class="card-body-row">' + line + '</div>';
     }
 
-    // ⚖ 重量：100g / 預計國際運費：$25
+    // 📦 重量 / 預計國際運費
     let weightStr = "";
     let intlStr   = "";
-    if (headerKeys.includes(COL_WEIGHT) && last[COL_WEIGHT]) {
+    if (hasWeight && last[COL_WEIGHT]) {
       const w = parseNumberSafe(last[COL_WEIGHT]);
       weightStr = (w !== null) ? (w + "g") : (last[COL_WEIGHT] + "g");
     }
-    if (headerKeys.includes(COL_INTL_FEE) && last[COL_INTL_FEE]) {
+    if (hasIntlFee && last[COL_INTL_FEE]) {
       const fee = parseNumberSafe(last[COL_INTL_FEE]);
       intlStr = (fee !== null)
         ? ("$" + fee.toLocaleString("zh-TW"))
         : ("$" + last[COL_INTL_FEE]);
     }
     if (weightStr || intlStr) {
-      html += '<div class="card-body-row">⚖ 重量：' + (weightStr || "—") +
+      html += '<div class="card-body-row">📦 重量：' + (weightStr || "—") +
               ' / 預計國際運費：' + (intlStr || "—") + '</div>';
     }
 
     // ✅ 金額已含國際運費
-    if (headerKeys.includes(COL_INTL_INC) && last[COL_INTL_INC]) {
+    if (hasIntlInc && last[COL_INTL_INC]) {
       const v = (last[COL_INTL_INC] || "").toString().toLowerCase();
       const isIncluded = ["true","yes","1","是","y"].some(t => v.includes(t));
       if (isIncluded) {
@@ -971,7 +895,7 @@ function searchOrder() {
     if (noteCombined) {
       html += '<div class="card-body-row">📝 備註：' + noteCombined + '</div>';
     }
-    if (hasShipDate && last[COL_SHIPDATE]) {
+    if (hasShip && last[COL_SHIPDATE]) {
       html += '<div class="card-body-row">🚚 出貨日期：' +
               formatDateDisplay(last[COL_SHIPDATE]) + '</div>';
     }
@@ -989,9 +913,9 @@ function searchOrder() {
     '</div>';
 
   // 歷史訂單
-  if (hasStatus && (hasShipDate || hasDate)) {
+  if (hasStatus && (hasShip || hasDate)) {
     const doneRows = matches.filter(r => getStatusStyleKey(r[COL_STATUS]) === "done");
-    html += buildHistoryByDateSection(doneRows, hasItem, hasSpec, hasQty, hasPrice, hasShipDate, hasDate);
+    html += buildHistoryByDateSection(doneRows, hasItem, hasSpec, hasQty, hasPrice, hasShip, hasDate);
   }
 
   html += statusLegendHtml();
@@ -1015,7 +939,7 @@ function statusLegendHtml() {
   );
 }
 
-function buildHistoryByDateSection(doneRows, hasItem, hasSpec, hasQty, hasPrice, hasShipDate, hasDate) {
+function buildHistoryByDateSection(doneRows, hasItem, hasSpec, hasQty, hasPrice, hasShip, hasDate) {
   if (!doneRows || !doneRows.length) {
     return (
       '<div class="history-box">' +
@@ -1028,7 +952,7 @@ function buildHistoryByDateSection(doneRows, hasItem, hasSpec, hasQty, hasPrice,
   const dateGroup = {};
   doneRows.forEach(r => {
     let d = "未填日期";
-    if (hasShipDate && r[COL_SHIPDATE]) {
+    if (hasShip && r[COL_SHIPDATE]) {
       d = formatDateDisplay(r[COL_SHIPDATE]);
     } else if (hasDate && r[COL_DATE]) {
       d = formatDateDisplay(r[COL_DATE]);
@@ -1146,6 +1070,7 @@ function setupStatusFilter() {
   apply();
 }
 </script>
+
 
 </body>
 </html>
