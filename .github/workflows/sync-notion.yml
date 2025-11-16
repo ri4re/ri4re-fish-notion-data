@@ -5,6 +5,9 @@ on:
     - cron: "0 * * * *"   # 每小時整點執行
   workflow_dispatch: {}   # 手動觸發
 
+permissions:
+  contents: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
