@@ -8,31 +8,33 @@
   <style>
     /* ========= 共用樣式 ========= */
     /* ========= 共用樣式（置中美觀版） ========= */
+/* ========= 全站基底 ========= */
 body {
   font-family: "Zen Maru Gothic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #FFF6E7;
+  background: #FFF6E7; /* 奶油橘底 */
   padding: 24px;
   margin: 0;
   color: #333;
 }
 
+/* ========= 中央白色卡片 ========= */
 .wrap {
-  max-width: 720px;
-  margin: 0 auto;
-  background: #FFFDF7;
+  max-width: 720px;         /* 中央置中寬度 */
+  margin: 0 auto;           /* 置中 */
+  background: #FFFDF7;      /* 淡白黃 */
   border-radius: 18px;
   padding: 20px 20px 24px;
   box-shadow: 0 6px 16px rgba(0,0,0,0.06);
   box-sizing: border-box;
 }
 
+/* ========= 標題區 ========= */
 h1 {
   font-size: 24px;
   text-align: center;
   margin: 0 0 8px;
   letter-spacing: 1px;
 }
-
 h1 span {
   font-size: 26px;
 }
@@ -44,55 +46,31 @@ h1 span {
   margin-bottom: 14px;
 }
 
-.status-text {
-  font-size: 12px;
-  color: #555;
-  margin: 2px 0 10px;
-  line-height: 1.5;
-}
-
-label {
-  font-size: 14px;
-  display: block;
-  margin: 8px 0 4px;
-}
-
 /* ========= 搜尋區塊 ========= */
 .search-block {
-  margin-bottom: 6px;
+  margin-bottom: 12px;
 }
 
-/* 選擇 + 搜尋排列成同一行 */
-.search-row-flex {
+.search-inline {
   display: flex;
-  gap: 10px;
   width: 100%;
-  margin-bottom: 10px;
-}
-
-.search-row-flex select {
-  flex: 0 0 34%;
-  border-radius: 12px;
-  border: 1px solid #FFD6A0;
-  padding: 10px 12px;
-  background: #FFFDF8;
-  font-size: 14px;
+  margin-top: 6px;
   box-sizing: border-box;
 }
 
-.search-row-flex input[type="text"] {
-  flex: 1;
-  border-radius: 12px;
+.search-inline input[type="text"] {
+  flex: 1 1 auto;
+  border-radius: 999px 0 0 999px;
   border: 1px solid #FFB96A;
+  border-right: none;
   padding: 10px 12px;
-  background: #FFFDF8;
   font-size: 14px;
-  box-sizing: border-box;
+  background: #FFFDF8;
 }
 
-.search-row-flex button {
+.search-inline button {
   flex: 0 0 auto;
-  border-radius: 12px;
+  border-radius: 0 999px 999px 0;
   border: 1px solid #FFB96A;
   background: #FFB763;
   padding: 10px 16px;
@@ -101,24 +79,42 @@ label {
   font-weight: 600;
   box-shadow: 0 3px 0 #E39A3C;
 }
-
-/* 按下變低一點 */
-.search-row-flex button:active {
+.search-inline button:active {
   transform: translateY(2px);
   box-shadow: 0 1px 0 #E39A3C;
 }
 
+.search-select {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #FFD6A0;
+  padding: 10px 12px;
+  background: #FFFDF8;
+  font-size: 14px;
+}
+
+/* 提示文字 */
 .tip {
   font-size: 12px;
   color: #777;
   margin-top: 6px;
-  line-height: 1.4;
 }
 
-.result {
-  margin-top: 16px;
+/* ========= 客人資訊卡 ========= */
+.customer-box {
+  background: #FFF4DA;
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid #FFD8A8;
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+.customer-box ul {
+  margin: 0;
+  padding-left: 18px;
 }
 
+/* ========= 商品列表標題 ========= */
 .section-title {
   font-size: 15px;
   font-weight: 700;
@@ -129,262 +125,140 @@ label {
   gap: 4px;
 }
 
-.section-title-icon {
-  font-size: 14px;
-}
-
-/* ========= 客人資訊 ========= */
-.customer-box {
-  background: #FFF4DA;
-  border-radius: 12px;
-  padding: 10px 12px;
-  border: 1px solid #FFD8A8;
-  font-size: 14px;
-  line-height: 1.7;
-  margin-bottom: 4px;
-  list-style: none;
-}
-
-.customer-box ul {
-  margin: 0;
-  padding-left: 18px;
-}
-
-.info-box {
-  margin-top: 12px;
-  font-size: 13px;
-  background: #FFF0D8;
-  border-radius: 12px;
-  padding: 10px 12px;
-  border: 1px dashed #FFBC75;
-  color: #555;
-  line-height: 1.5;
-}
-
-.empty {
-  font-size: 14px;
-  color: #999;
-  text-align: center;
-  margin-top: 12px;
-}
-
-/* ====== 小計 ====== */
+/* ========= 商品小結 ========= */
 .summary-box {
   font-size: 13px;
   background: #FFF4E0;
   border-radius: 10px;
-  padding: 6px 10px;
-  margin-bottom: 6px;
+  padding: 8px 12px;
   color: #704214;
+  margin-bottom: 6px;
+  line-height: 1.4;
 }
 
-.summary-box b {
-  font-weight: 700;
-}
-
-/* ====== 篩選區 ====== */
+/* ========= 篩選列（取代 checkbox） ========= */
 .filter-bar {
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
-  color: #555;
+  margin: 10px 0;
+  text-align: right;
 }
-
-/* ====== 狀態 legend ====== */
-.status-legend {
-  margin-top: 10px;
-  font-size: 12px;
-  background: #FFFDF5;
+.filter-select {
   border-radius: 10px;
-  padding: 8px 10px;
-  border: 1px dashed #FFE0B2;
-  color: #555;
+  border: 1px solid #FFCE98;
+  padding: 6px 10px;
+  background: #FFFDF6;
+  font-size: 13px;
 }
 
-.status-legend ul {
-  margin: 6px 0 0;
-  padding-left: 18px;
-}
-
-.status-legend li {
-  margin-bottom: 3px;
-  list-style: none;
-}
-
-.legend-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 6px;
-  vertical-align: middle;
-}
-
-.legend-dot-pending { background: #FFD8A8; }
-.legend-dot-processing { background: #FFC9C9; }
-.legend-dot-arrived { background: #91A7FF; }
-.legend-dot-done { background: #8CE99A; }
-
-/* ===== 卡片 ===== */
+/* ========= 卡片（訂單） ========= */
 .card {
   border-radius: 14px;
-  padding: 10px 12px;
-  margin-bottom: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
   border: 1px solid #FFD7B0;
-  background: #FFF7E6;
   font-size: 14px;
-  box-sizing: border-box;
-  overflow: hidden;
+  background: #FFF8EE;
 }
 
-.card--pending { background: #FFF7E6; border-color: #FFD8A8; }
-.card--processing { background: #FFF3D9; border-color: #FFC078; }
-.card--arrived { background: #E8F4FF; border-color: #74C0FC; }
-.card--done { background: #E7FBEF; border-color: #69DB7C; }
-.card--default { background: #F8F9FA; border-color: #CED4DA; }
+/* ===== 狀態顏色 ===== */
+.card--pending {
+  background: #FFF7E6;
+  border-color: #FFD8A8;
+}
+.card--processing {
+  background: #FFF3D9;
+  border-color: #FFC078;
+}
+.card--arrived {
+  background: #E8F4FF;
+  border-color: #74C0FC;
+}
+.card--done {
+  background: #E7FBEF;
+  border-color: #69DB7C;
+}
 
+/* ===== 卡片 header ===== */
 .card-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   cursor: pointer;
-  gap: 8px;
 }
-
-.card-main {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
 .card-title {
   font-weight: 700;
-  margin-bottom: 2px;
-  color: #7A4D1A;
   font-size: 15px;
+  color: #7A4D1A;
 }
-
 .card-subline {
   font-size: 13px;
   color: #555;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  margin-top: 3px;
 }
 
-.card-subline span {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.card-toggle-icon {
-  font-size: 16px;
-  flex: 0 0 auto;
-  color: #996633;
-  transform: translateY(1px);
-}
-
+/* 狀態小 badge */
 .badge {
   display: inline-block;
-  padding: 1px 8px;
+  padding: 2px 8px;
   border-radius: 999px;
   font-size: 11px;
   margin-left: 4px;
-  white-space: nowrap;
 }
+.badge--pending { background: #FFE8CC; color:#D9480F; }
+.badge--processing { background:#FFE3E3; color:#C92A2A; }
+.badge--arrived { background:#DCEFFF; color:#1C7ED6; }
+.badge--done { background:#D3F9D8; color:#2B8A3E; }
 
-.badge--pending { background: #FFE8CC; color: #D9480F; }
-.badge--processing { background: #FFE3E3; color: #C92A2A; }
-.badge--arrived { background: #DCEFFF; color: #1C7ED6; }
-.badge--done { background: #D3F9D8; color: #2B8A3E; }
-.badge--default { background: #E9ECEF; color: #495057; }
-
+/* ========= 展開內容 ========= */
 .card-body {
   margin-top: 8px;
   font-size: 13px;
   line-height: 1.6;
   display: none;
 }
-
 .card-body.open {
   display: block;
 }
-
 .card-body-row {
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 }
 
+/* ========= 連結按鈕 ========= */
 .link-btn {
   display: inline-block;
-  padding: 4px 9px;
-  border-radius: 10px;
-  font-size: 12px;
-  text-decoration: none;
+  background: white;
   border: 1px solid #FFB963;
-  background: #FFF;
-  margin-top: 3px;
+  padding: 4px 9px;
+  font-size: 12px;
+  border-radius: 10px;
+  text-decoration: none;
 }
-
 .link-btn:hover {
   background: #FFF3E0;
 }
 
-    /* ========= 手機 RWD ========= */
-    @media (max-width: 768px) {
-      body {
-        padding: 0;
-        background: #FFF6E7;
-      }
+/* ========= 手機 RWD ========= */
+@media (max-width: 768px) {
+  body {
+    padding: 12px;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    border-radius: 16px;
+    padding: 18px 14px 22px;
+  }
 
-      .wrap {
-        max-width: 100%;
-        margin: 0;
-        border-radius: 0;
-        box-shadow: none;
-        padding: 20px 14px 24px;
-        min-height: 100vh;
-      }
+  .search-inline input[type="text"] {
+    font-size: 16px;
+    padding: 12px 12px;
+  }
+  .search-inline button {
+    font-size: 16px;
+    padding: 12px 16px;
+  }
 
-      h1 {
-        font-size: 22px;
-        padding-bottom: 4px;
-        border-bottom: 1px solid #FFE1B7;
-      }
-
-      .subtitle {
-        margin-top: 4px;
-        margin-bottom: 14px;
-      }
-
-      .search-row-select select {
-        font-size: 15px;
-        padding: 11px 12px;
-      }
-
-      .search-inline input[type="text"] {
-        font-size: 16px;
-        padding: 12px 12px;
-      }
-
-      .search-inline button {
-        font-size: 16px;
-        padding: 12px 16px;
-      }
-
-      .card {
-        font-size: 14px;
-      }
-
-      .card-title {
-        font-size: 15px;
-      }
-
-      .info-box {
-        font-size: 13px;
-      }
-    }
+  .card { font-size: 14px; }
+}
   </style>
 </head>
 
