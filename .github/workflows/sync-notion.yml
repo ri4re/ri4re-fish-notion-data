@@ -22,7 +22,11 @@ jobs:
         env:
           NOTION_SECRET: ${{ secrets.NOTION_SECRET }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-        run: node scripts/fetch-notion.js
+        run: |
+          echo "NOTION_SECRET length: ${#NOTION_SECRET}"
+          echo "NOTION_DATABASE_ID length: ${#NOTION_DATABASE_ID}"
+          node scripts/fetch-notion.js
+
 
       - name: Commit and push if changed
         run: |
