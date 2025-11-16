@@ -10,32 +10,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      # 1) 把 repo checkout 下來
+      - name: チェックアウトリポジトリ
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      # 2) 設定 Node 20
+      - name: セットアップノード
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install dependencies
-        run: npm install
+      # ✅ 不需要 npm install，所以把「依存関係をインストールする」整段刪掉
 
-      - name: Run Notion fetch script
+      # 3) 執行 Notion 抓資料腳本（路徑用你原本的，如果是 scripts/ 就改回 scripts/）
+      - name: Notion fetch スクリプトを実行してください
         env:
           NOTION_SECRET: ${{ secrets.NOTION_SECRET }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-        run: node scripts/fetch-notion.js
+        run: node スクリプト/fetch-notion.js
 
-      - name: Commit and push if changed
+      # 4) 有變更就 commit & push（包含 fishorder.csv）
+      - name: 変更があればコミットしてプッシュしてください
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # 🔥 追蹤新產生的 fishorder.csv（沒有這行就會再度失敗）
+          # 新產生的 fishorder.csv 納入追蹤
           git add fishorder.csv || true
 
-          # 🔥 若真的有變更，才提交並推送
+          # 如果真的有變更才提交
           if [ -n "$(git status --porcelain)" ]; then
             echo "Changes detected. Committing..."
             git commit -m "Update fishorder.csv from Notion"
