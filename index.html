@@ -9,31 +9,49 @@
     /* ========= 共用樣式 ========= */
     /* ========= 共用樣式（置中美觀版） ========= */
 /* ========= 全站基底 ========= */
+/* ========= 全站基底 ========= */
 body {
   font-family: "Zen Maru Gothic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #FFF6E7; /* 奶油橘底 */
-  padding: 24px;
+  background: radial-gradient(circle at top, #FFF6E7 0%, #FFE7C9 45%, #FFE0BA 100%);
   margin: 0;
-  color: #333;
-}
-
-/* ========= 中央白色卡片 ========= */
-.wrap {
-  max-width: 720px;         /* 中央置中寬度 */
-  margin: 0 auto;           /* 置中 */
-  background: #FFFDF7;      /* 淡白黃 */
-  border-radius: 18px;
-  padding: 20px 20px 24px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  padding: 24px 16px;
+  color: #3F2A16;
   box-sizing: border-box;
 }
 
-/* ========= 標題區 ========= */
+/* ========= 中央白色卡片（桌機置中、手機滿版） ========= */
+.wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  background: #FFFBF3;
+  border-radius: 26px;
+  padding: 20px 24px 26px;
+  box-shadow: 0 14px 30px rgba(0,0,0,0.08);
+  border: 1px solid #FFDDB1;
+  box-sizing: border-box;
+}
+
+/* ========= 頂端小膠囊網址 ========= */
+.site-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  margin: 0 auto 14px;
+  border-radius: 999px;
+  background: #FFFFFF;
+  border: 1px solid #EADFDB;
+  font-size: 12px;
+  color: #7A5A40;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+/* ========= 主標題 ========= */
 h1 {
   font-size: 24px;
-  text-align: center;
+  text-align: left;
   margin: 0 0 8px;
-  letter-spacing: 1px;
+  color: #7A4D1A;
 }
 h1 span {
   font-size: 26px;
@@ -41,148 +59,187 @@ h1 span {
 
 .subtitle {
   font-size: 12px;
-  text-align: center;
-  color: #87613B;
-  margin-bottom: 14px;
+  color: #A26A33;
+  margin-bottom: 16px;
 }
 
 /* ========= 搜尋區塊 ========= */
 .search-block {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.search-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8B5E2C;
+  margin-bottom: 4px;
 }
 
 .search-inline {
   display: flex;
   width: 100%;
-  margin-top: 6px;
+  margin-top: 4px;
   box-sizing: border-box;
 }
 
 .search-inline input[type="text"] {
   flex: 1 1 auto;
   border-radius: 999px 0 0 999px;
-  border: 1px solid #FFB96A;
+  border: 1px solid #FFC887;
   border-right: none;
-  padding: 10px 12px;
+  padding: 9px 12px;
   font-size: 14px;
   background: #FFFDF8;
+  color: #4A3218;
+  outline: none;
+}
+.search-inline input[type="text"]::placeholder {
+  color: #C4A489;
 }
 
 .search-inline button {
   flex: 0 0 auto;
   border-radius: 0 999px 999px 0;
-  border: 1px solid #FFB96A;
-  background: #FFB763;
-  padding: 10px 16px;
+  border: 1px solid #FFC887;
+  background: linear-gradient(135deg, #FFC872, #FFAA5C);
+  padding: 9px 16px;
   font-size: 14px;
   cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 3px 0 #E39A3C;
+  font-weight: 700;
+  color: #5B3410;
+  box-shadow: 0 3px 0 #E08C38;
+  transition: transform 0.05s ease, box-shadow 0.05s ease, filter 0.1s ease;
+}
+.search-inline button:hover {
+  filter: brightness(1.03);
 }
 .search-inline button:active {
   transform: translateY(2px);
-  box-shadow: 0 1px 0 #E39A3C;
+  box-shadow: 0 1px 0 #E08C38;
 }
 
 .search-select {
   width: 100%;
   border-radius: 12px;
   border: 1px solid #FFD6A0;
-  padding: 10px 12px;
+  padding: 8px 12px;
   background: #FFFDF8;
-  font-size: 14px;
+  font-size: 13px;
+  color: #5A3A1C;
+  margin-top: 6px;
 }
 
 /* 提示文字 */
 .tip {
-  font-size: 12px;
-  color: #777;
+  font-size: 11px;
+  color: #9B7A54;
   margin-top: 6px;
+}
+
+/* ========= 區塊標題 ========= */
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 18px 0 10px;
+  color: #8B5E2C;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-title::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #FFB55C;
+  box-shadow: 0 0 0 3px #FFE7C2;
 }
 
 /* ========= 客人資訊卡 ========= */
 .customer-box {
-  background: #FFF4DA;
-  border-radius: 12px;
-  padding: 10px 12px;
-  border: 1px solid #FFD8A8;
-  line-height: 1.7;
-  margin-bottom: 8px;
+  background: #FFE4C3;
+  border-radius: 20px;
+  padding: 14px 18px;
+  border: 1px solid #F3C18B;
+  line-height: 1.8;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
 }
 .customer-box ul {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 20px;
+  font-size: 13px;
+}
+.customer-box strong {
+  color: #7C4C21;
 }
 
-/* ========= 商品列表標題 ========= */
-.section-title {
-  font-size: 15px;
-  font-weight: 700;
-  margin: 16px 0 8px;
-  color: #8B5E2C;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* ========= 商品小結 ========= */
+/* ========= 商品小結（橘色條） ========= */
 .summary-box {
   font-size: 13px;
-  background: #FFF4E0;
-  border-radius: 10px;
-  padding: 8px 12px;
+  background: #FFEBC8;
+  border-radius: 16px;
+  padding: 10px 14px;
   color: #704214;
-  margin-bottom: 6px;
-  line-height: 1.4;
+  margin-bottom: 10px;
+  line-height: 1.5;
+  border: 1px solid #F1C58F;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+}
+.summary-box strong {
+  color: #C25F1F;
 }
 
-/* ========= 篩選列（取代 checkbox） ========= */
+/* ========= 篩選列 ========= */
 .filter-bar {
-  margin: 10px 0;
-  text-align: right;
+  margin: 10px 0 6px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #906135;
+}
+.filter-label {
+  font-weight: 600;
 }
 .filter-select {
-  border-radius: 10px;
+  border-radius: 999px;
   border: 1px solid #FFCE98;
-  padding: 6px 10px;
+  padding: 6px 12px;
   background: #FFFDF6;
-  font-size: 13px;
+  font-size: 12px;
+  color: #5A3A1C;
 }
 
-/* ========= 卡片（訂單） ========= */
+/* ========= 訂單卡 ========= */
 .card {
-  border-radius: 14px;
-  padding: 12px;
+  border-radius: 20px;
+  padding: 12px 14px 10px;
   margin-bottom: 12px;
-  border: 1px solid #FFD7B0;
+  border: 1px solid #F2C08A;
   font-size: 14px;
-  background: #FFF8EE;
+  background: #FFEFD4;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
 }
 
-/* ===== 狀態顏色 ===== */
-.card--pending {
-  background: #FFF7E6;
-  border-color: #FFD8A8;
-}
-.card--processing {
-  background: #FFF3D9;
-  border-color: #FFC078;
-}
-.card--arrived {
-  background: #E8F4FF;
-  border-color: #74C0FC;
-}
-.card--done {
-  background: #E7FBEF;
-  border-color: #69DB7C;
-}
+/* 狀態顏色 */
+.card--pending   { background:#FFF7E2; border-color:#FFD8A8; }
+.card--processing{ background:#FFE8D7; border-color:#FFC078; }
+.card--arrived   { background:#EAF4FF; border-color:#74C0FC; }
+.card--done      { background:#E5FAEE; border-color:#69DB7C; }
 
-/* ===== 卡片 header ===== */
 .card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   cursor: pointer;
+  gap: 8px;
 }
 .card-title {
   font-weight: 700;
@@ -190,74 +247,136 @@ h1 span {
   color: #7A4D1A;
 }
 .card-subline {
-  font-size: 13px;
-  color: #555;
-  margin-top: 3px;
+  font-size: 12px;
+  color: #6C5A46;
+  margin-top: 2px;
 }
 
-/* 狀態小 badge */
+/* 狀態 badge */
 .badge {
   display: inline-block;
-  padding: 2px 8px;
+  padding: 2px 9px;
   border-radius: 999px;
   font-size: 11px;
   margin-left: 4px;
+  font-weight: 600;
 }
-.badge--pending { background: #FFE8CC; color:#D9480F; }
-.badge--processing { background:#FFE3E3; color:#C92A2A; }
-.badge--arrived { background:#DCEFFF; color:#1C7ED6; }
-.badge--done { background:#D3F9D8; color:#2B8A3E; }
+.badge--pending   { background:#FFE8CC; color:#D9480F; }
+.badge--processing{ background:#FFE3E3; color:#C92A2A; }
+.badge--arrived   { background:#DCEFFF; color:#1C7ED6; }
+.badge--done      { background:#D3F9D8; color:#2B8A3E; }
 
-/* ========= 展開內容 ========= */
+/* 展開內容 */
 .card-body {
   margin-top: 8px;
   font-size: 13px;
   line-height: 1.6;
   display: none;
+  border-top: 1px dashed rgba(0,0,0,0.08);
+  padding-top: 6px;
 }
-.card-body.open {
-  display: block;
-}
-.card-body-row {
-  margin-bottom: 4px;
+.card-body.open { display: block; }
+.card-body-row { margin-bottom: 4px; }
+.card-body-label {
+  font-weight: 600;
+  color: #8B5E2C;
 }
 
-/* ========= 連結按鈕 ========= */
+/* 連結按鈕 */
 .link-btn {
   display: inline-block;
-  background: white;
+  background: #FFFFFF;
   border: 1px solid #FFB963;
-  padding: 4px 9px;
+  padding: 4px 10px;
   font-size: 12px;
-  border-radius: 10px;
+  border-radius: 999px;
   text-decoration: none;
+  color: #8B5E2C;
+  margin-top: 4px;
 }
-.link-btn:hover {
-  background: #FFF3E0;
+.link-btn:hover { background:#FFF3E0; }
+
+/* ========= 下方說明區塊們 ========= */
+/* 橘色提醒（有小鈴鐺那塊） */
+.notice-box {
+  margin-top: 14px;
+  background: #FFF3DE;
+  border: 1px dashed #F3C979;
+  border-radius: 18px;
+  padding: 10px 14px 12px;
+  font-size: 12px;
+  color: #82521E;
+  line-height: 1.7;
 }
 
-/* ========= 手機 RWD ========= */
+/* 紫色歷史訂單區 */
+.history-box {
+  margin-top: 18px;
+  background: #F2ECFF;
+  border: 1px solid #C5B2FF;
+  border-radius: 20px;
+  padding: 12px 16px 14px;
+  font-size: 13px;
+  color: #41335A;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+}
+
+/* 狀態說明（黃色） */
+.status-box {
+  margin-top: 14px;
+  background: #FFF8E3;
+  border: 1px dashed #F0CF7C;
+  border-radius: 18px;
+  padding: 10px 14px 12px;
+  font-size: 12px;
+  color: #7A541F;
+  line-height: 1.7;
+}
+
+/* ========= 手機 RWD：滿版 ========= */
 @media (max-width: 768px) {
   body {
-    padding: 12px;
+    padding: 0;
+    background: #FFF6E7;
   }
+
   .wrap {
-    max-width: 720px;
-    margin: 0 auto;
-    border-radius: 16px;
-    padding: 18px 14px 22px;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+    padding: 18px 14px 24px;
+    box-shadow: none;
+    border: none;
   }
 
-  .search-inline input[type="text"] {
-    font-size: 16px;
-    padding: 12px 12px;
+  .site-pill {
+    margin-top: 4px;
   }
+
+  h1 {
+    font-size: 22px;
+  }
+  h1 span {
+    font-size: 24px;
+  }
+
+  .search-inline input[type="text"],
   .search-inline button {
-    font-size: 16px;
-    padding: 12px 16px;
+    font-size: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 
-  .card { font-size: 14px; }
+  .customer-box,
+  .summary-box,
+  .card,
+  .notice-box,
+  .history-box,
+  .status-box {
+    border-radius: 18px;
+  }
 }
   </style>
 </head>
